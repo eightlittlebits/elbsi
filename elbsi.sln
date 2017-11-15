@@ -1,0 +1,37 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.27004.2009
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "elbsi_core", "elbsi_core\elbsi_core.csproj", "{A33247D8-B9E3-41A9-8E37-F2BE365C33DD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "elbsi_console", "elbsi_console\elbsi_console.csproj", "{C6BFCDBB-E97A-4828-B455-23545316DB7B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "elbsi_ui", "elbsi_ui\elbsi_ui.csproj", "{C1E3CA19-EDEA-4270-B33F-B45A5709F00C}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{A33247D8-B9E3-41A9-8E37-F2BE365C33DD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A33247D8-B9E3-41A9-8E37-F2BE365C33DD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A33247D8-B9E3-41A9-8E37-F2BE365C33DD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A33247D8-B9E3-41A9-8E37-F2BE365C33DD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C6BFCDBB-E97A-4828-B455-23545316DB7B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C6BFCDBB-E97A-4828-B455-23545316DB7B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C6BFCDBB-E97A-4828-B455-23545316DB7B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C6BFCDBB-E97A-4828-B455-23545316DB7B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C1E3CA19-EDEA-4270-B33F-B45A5709F00C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C1E3CA19-EDEA-4270-B33F-B45A5709F00C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C1E3CA19-EDEA-4270-B33F-B45A5709F00C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C1E3CA19-EDEA-4270-B33F-B45A5709F00C}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {1ECAB424-9C53-4947-AFDE-64E4952BE116}
+	EndGlobalSection
+EndGlobal
