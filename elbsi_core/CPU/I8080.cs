@@ -134,7 +134,7 @@ namespace elbsi_core.CPU
                 case 0x01: _r.BC = ReadWord(_pc); _pc += 2; cycles = 10; break; // LXI B,a16
                 case 0x02: goto default;
                 case 0x03: _r.BC++; cycles = 5; break; // INX B
-                case 0x04: goto default;
+                case 0x04: _r.B = Inc8Bit(_r.B); cycles = 5; break; // INR B
                 case 0x05: _r.B = Dec8Bit(_r.B); cycles = 5; break; // DCR B
                 case 0x06: _r.B = ReadByte(_pc++); cycles = 7; break; // MVI B,d8
                 case 0x07: _r.A = RotateLeft(_r.A); cycles = 4; break; // RLC
@@ -142,40 +142,40 @@ namespace elbsi_core.CPU
                 case 0x09: goto default;
                 case 0x0A: goto default;
                 case 0x0B: goto default;
-                case 0x0C: goto default;
-                case 0x0D: goto default;
+                case 0x0C: _r.C = Inc8Bit(_r.C); cycles = 5; break; // INR C
+                case 0x0D: _r.C = Dec8Bit(_r.C); cycles = 5; break; // DCR C
                 case 0x0E: _r.C = ReadByte(_pc++); cycles = 7; break; // MVI C,d8
                 case 0x0F: _r.A = RotateRight(_r.A); cycles = 4; break; // RRC
                 case 0x10: goto default;
                 case 0x11: _r.DE = ReadWord(_pc); _pc += 2; cycles = 10; break; // LXI D,a16
                 case 0x12: goto default;
                 case 0x13: _r.DE++; cycles = 5; break; // INX D
-                case 0x14: goto default;
-                case 0x15: goto default;
+                case 0x14: _r.D = Inc8Bit(_r.D); cycles = 5; break; // INR D
+                case 0x15: _r.D = Dec8Bit(_r.D); cycles = 5; break; // DCR D
                 case 0x16: goto default;
                 case 0x17: goto default;
                 case 0x18: goto default;
                 case 0x19: goto default;
                 case 0x1A: goto default;
                 case 0x1B: goto default;
-                case 0x1C: goto default;
-                case 0x1D: goto default;
+                case 0x1C: _r.E = Inc8Bit(_r.E); cycles = 5; break; // INR E
+                case 0x1D: _r.E = Dec8Bit(_r.E); cycles = 5; break; // DCR E
                 case 0x1E: goto default;
                 case 0x1F: goto default;
                 case 0x20: goto default;
                 case 0x21: _r.HL = ReadWord(_pc); _pc += 2; cycles = 10; break; // LXI H,a16
                 case 0x22: goto default;
                 case 0x23: _r.HL++; cycles = 5; break; // INX H
-                case 0x24: goto default;
-                case 0x25: goto default;
+                case 0x24: _r.H = Inc8Bit(_r.H); cycles = 5; break; // INR H
+                case 0x25: _r.H = Dec8Bit(_r.H); cycles = 5; break; // DCR H
                 case 0x26: goto default;
                 case 0x27: goto default;
                 case 0x28: goto default;
                 case 0x29: goto default;
                 case 0x2A: goto default;
                 case 0x2B: goto default;
-                case 0x2C: goto default;
-                case 0x2D: goto default;
+                case 0x2C: _r.L = Inc8Bit(_r.L); cycles = 5; break; // INR L
+                case 0x2D: _r.L = Dec8Bit(_r.L); cycles = 5; break; // DCR L
                 case 0x2E: goto default;
                 case 0x2F: goto default;
                 case 0x30: goto default;
@@ -191,7 +191,7 @@ namespace elbsi_core.CPU
                 case 0x3A: _r.A = ReadByte(ReadWord(_pc)); _pc += 2; cycles = 13; break; // LDA a16
                 case 0x3B: goto default;
                 case 0x3C: _r.A = Inc8Bit(_r.A); cycles = 5; break; // INR A
-                case 0x3D: goto default;
+                case 0x3D: _r.A = Dec8Bit(_r.A); cycles = 5; break; // DCR A
                 case 0x3E: _r.A = ReadByte(_pc++); cycles = 7; break; // MVI A,d8
                 case 0x3F: goto default;
                 case 0x40: cycles = 5; break; // MOV B,B
@@ -328,7 +328,7 @@ namespace elbsi_core.CPU
                 case 0xC3: JumpImmediate(); cycles = 10; break; // JMP a16
                 case 0xC4: cycles = CallImmediate(!_r.F[Z]); break; // CNZ a16
                 case 0xC5: PushWord(_r.BC); cycles = 11; break; // PUSH B
-                case 0xC6: goto default;
+                case 0xC6: (_r.A, _r.F) = Add8Bit(_r.A, ReadByte(_pc++)); cycles = 7; break; // ADI d8
                 case 0xC7: goto default;
                 case 0xC8: cycles = Return(_r.F[Z]); break; // RZ
                 case 0xC9: Return(); cycles = 10; break; // RET
@@ -336,7 +336,7 @@ namespace elbsi_core.CPU
                 case 0xCB: goto default;
                 case 0xCC: cycles = CallImmediate(_r.F[Z]); break; // CZ a16
                 case 0xCD: CallImmediate(); cycles = 17; break; // CALL a16
-                case 0xCE: goto default;
+                case 0xCE: (_r.A, _r.F) = Add8Bit(_r.A, ReadByte(_pc++), _r.F[C]); cycles = 7; break; // ACI d8
                 case 0xCF: goto default;
                 case 0xD0: cycles = Return(!_r.F[C]); break; // RNC a16
                 case 0xD1: _r.DE = PopWord(); cycles = 10; break; // POP D
@@ -344,7 +344,7 @@ namespace elbsi_core.CPU
                 case 0xD3: goto default;
                 case 0xD4: cycles = CallImmediate(!_r.F[C]); break; // CNC a16
                 case 0xD5: PushWord(_r.DE); cycles = 11; break; // PUSH D
-                case 0xD6: goto default;
+                case 0xD6: (_r.A, _r.F) = Sub8Bit(_r.A, ReadByte(_pc++)); cycles = 7; break; // SUI d8
                 case 0xD7: goto default;
                 case 0xD8: cycles = Return(_r.F[C]); break; // RC a16
                 case 0xD9: goto default;
@@ -352,7 +352,7 @@ namespace elbsi_core.CPU
                 case 0xDB: goto default;
                 case 0xDC: cycles = CallImmediate(_r.F[C]); break; // CC a16
                 case 0xDD: goto default;
-                case 0xDE: goto default;
+                case 0xDE: (_r.A, _r.F) = Sub8Bit(_r.A, ReadByte(_pc++), _r.F[C]); cycles = 7; break; // SBI d8
                 case 0xDF: goto default;
                 case 0xE0: cycles = Return(!_r.F[P]); break; // RPO
                 case 0xE1: _r.HL = PopWord(); cycles = 10; break; // POP H
@@ -368,7 +368,7 @@ namespace elbsi_core.CPU
                 case 0xEB: goto default;
                 case 0xEC: cycles = CallImmediate(_r.F[P]); break; // CPE a16
                 case 0xED: goto default;
-                case 0xEE: goto default;
+                case 0xEE: (_r.A, _r.F) = Xor8Bit(_r.A, ReadByte(_pc++)); cycles = 7; break; // XRI d8
                 case 0xEF: goto default;
                 case 0xF0: cycles = Return(!_r.F[S]); break; // RP
                 case 0xF1: _r.PSW = PopWord(); cycles = 10; break; // POP PSW
@@ -376,7 +376,7 @@ namespace elbsi_core.CPU
                 case 0xF3: goto default;
                 case 0xF4: cycles = CallImmediate(!_r.F[S]); break; // CP a16
                 case 0xF5: PushWord(_r.PSW); cycles = 11; break; // PUSH PSW
-                case 0xF6: goto default;
+                case 0xF6: (_r.A, _r.F) = Or8Bit(_r.A, ReadByte(_pc++)); cycles = 7; break; // ORI d8
                 case 0xF7: goto default;
                 case 0xF8: cycles = Return(_r.F[S]); break; // RM
                 case 0xF9: goto default;
