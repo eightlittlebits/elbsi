@@ -85,6 +85,8 @@ namespace elbsi_console
                 // if we jumped to 0 then end this test
                 if (cpu.PC == 0x0000)
                 {
+                    Console.WriteLine();
+                    Console.WriteLine();
                     Console.WriteLine("Jump to 0x0000 from 0x{0:X4}", pc);
                     return;
                 }
