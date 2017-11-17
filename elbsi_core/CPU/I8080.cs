@@ -132,68 +132,68 @@ namespace elbsi_core.CPU
             {
                 case 0x00: cycles = 4; break; // NOP
                 case 0x01: _r.BC = ReadWord(_pc); _pc += 2; cycles = 10; break; // LXI B,a16
-                case 0x02: goto default;
+                case 0x02: WriteByte(_r.BC, _r.A); cycles = 7; break; // STAX B
                 case 0x03: _r.BC++; cycles = 5; break; // INX B
                 case 0x04: _r.B = Inc8Bit(_r.B); cycles = 5; break; // INR B
                 case 0x05: _r.B = Dec8Bit(_r.B); cycles = 5; break; // DCR B
                 case 0x06: _r.B = ReadByte(_pc++); cycles = 7; break; // MVI B,d8
                 case 0x07: _r.A = RotateLeft(_r.A); cycles = 4; break; // RLC
-                case 0x08: goto default;
-                case 0x09: goto default;
-                case 0x0A: goto default;
-                case 0x0B: goto default;
+                case 0x08: cycles = 4; break; // *NOP
+                case 0x09: _r.HL = Add16Bit(_r.HL, _r.BC); cycles = 10; break; // DAD B
+                case 0x0A: _r.A = ReadByte(_r.BC); cycles = 7; break; // LDAX B
+                case 0x0B: _r.BC--; cycles = 5; break; // DCX B
                 case 0x0C: _r.C = Inc8Bit(_r.C); cycles = 5; break; // INR C
                 case 0x0D: _r.C = Dec8Bit(_r.C); cycles = 5; break; // DCR C
                 case 0x0E: _r.C = ReadByte(_pc++); cycles = 7; break; // MVI C,d8
                 case 0x0F: _r.A = RotateRight(_r.A); cycles = 4; break; // RRC
-                case 0x10: goto default;
+                case 0x10: cycles = 4; break; // *NOP
                 case 0x11: _r.DE = ReadWord(_pc); _pc += 2; cycles = 10; break; // LXI D,a16
-                case 0x12: goto default;
+                case 0x12: WriteByte(_r.DE, _r.A); cycles = 7; break; // STAX D
                 case 0x13: _r.DE++; cycles = 5; break; // INX D
                 case 0x14: _r.D = Inc8Bit(_r.D); cycles = 5; break; // INR D
                 case 0x15: _r.D = Dec8Bit(_r.D); cycles = 5; break; // DCR D
-                case 0x16: goto default;
-                case 0x17: goto default;
-                case 0x18: goto default;
-                case 0x19: goto default;
-                case 0x1A: goto default;
-                case 0x1B: goto default;
+                case 0x16: _r.D = ReadByte(_pc++); cycles = 7; break; // MVI D,d8
+                case 0x17: _r.A = RotateLeftThroughCarry(_r.A); cycles = 4; break; // RAL
+                case 0x18: cycles = 4; break; // *NOP
+                case 0x19: _r.HL = Add16Bit(_r.HL, _r.DE); cycles = 10; break; // DAD D
+                case 0x1A: _r.A = ReadByte(_r.DE); cycles = 7; break; // LDAX D
+                case 0x1B: _r.DE--; cycles = 5; break; // DCX D
                 case 0x1C: _r.E = Inc8Bit(_r.E); cycles = 5; break; // INR E
                 case 0x1D: _r.E = Dec8Bit(_r.E); cycles = 5; break; // DCR E
-                case 0x1E: goto default;
-                case 0x1F: goto default;
-                case 0x20: goto default;
+                case 0x1E: _r.E = ReadByte(_pc++); cycles = 7; break; // MVI E,d8
+                case 0x1F: _r.A = RotateRightThroughCarry(_r.A); cycles = 4; break; // RAL
+                case 0x20: cycles = 4; break; // *NOP
                 case 0x21: _r.HL = ReadWord(_pc); _pc += 2; cycles = 10; break; // LXI H,a16
-                case 0x22: goto default;
+                case 0x22: WriteWord(ReadWord(_pc), _r.HL); _pc += 2; cycles = 16; break; // SHLD
                 case 0x23: _r.HL++; cycles = 5; break; // INX H
                 case 0x24: _r.H = Inc8Bit(_r.H); cycles = 5; break; // INR H
                 case 0x25: _r.H = Dec8Bit(_r.H); cycles = 5; break; // DCR H
-                case 0x26: goto default;
-                case 0x27: goto default;
-                case 0x28: goto default;
-                case 0x29: goto default;
-                case 0x2A: goto default;
-                case 0x2B: goto default;
+                case 0x26: _r.H = ReadByte(_pc++); cycles = 7; break; // MVI C,d8
+                case 0x27: DecimalAdjustAccumulator(); cycles = 4; break; // DAA
+                case 0x28: cycles = 4; break; // *NOP
+                case 0x29: _r.HL = Add16Bit(_r.HL, _r.HL); cycles = 10; break; // DAD H
+                case 0x2A: _r.HL = ReadWord(ReadWord(_pc)); _pc += 2; cycles = 16; break; // LDHL
+                case 0x2B: _r.HL--; cycles = 5; break; // DCX H
                 case 0x2C: _r.L = Inc8Bit(_r.L); cycles = 5; break; // INR L
                 case 0x2D: _r.L = Dec8Bit(_r.L); cycles = 5; break; // DCR L
-                case 0x2E: goto default;
-                case 0x2F: goto default;
-                case 0x30: goto default;
+                case 0x2E: _r.L = ReadByte(_pc++); cycles = 7; break; // MVI L,d8
+                case 0x2F: _r.A = (byte)~_r.A; cycles = 4; break; // CMA
+                case 0x30: cycles = 4; break; // *NOP
                 case 0x31: _sp = ReadWord(_pc); _pc += 2; cycles = 10; break; // LXI SP,d16
-                case 0x32: goto default;
+                case 0x32: WriteByte(ReadWord(_pc), _r.A); _pc += 2; cycles = 13; break; // STA a16
                 case 0x33: _sp++; cycles = 5; break; // INX SP
-                case 0x34: goto default;
-                case 0x35: goto default;
-                case 0x36: goto default;
-                case 0x37: goto default;
-                case 0x38: goto default;
-                case 0x39: goto default;
+                case 0x34: WriteByte(_r.HL, Inc8Bit(ReadByte(_r.HL))); cycles = 10; break; // INR M
+                case 0x35: WriteByte(_r.HL, Dec8Bit(ReadByte(_r.HL))); cycles = 10; break; // DCR M
+                case 0x36: WriteByte(_r.HL, ReadByte(_pc++)); cycles = 10; break; // MVI M,d8
+                case 0x37: _r.F[C] = true; cycles = 4; break; // STC
+                case 0x38: cycles = 4; break; // *NOP
+                case 0x39: _r.HL = Add16Bit(_r.HL, _sp); cycles = 10; break; // DAD SP
                 case 0x3A: _r.A = ReadByte(ReadWord(_pc)); _pc += 2; cycles = 13; break; // LDA a16
-                case 0x3B: goto default;
+                case 0x3B: _sp--; cycles = 5; break; // DCX SP
                 case 0x3C: _r.A = Inc8Bit(_r.A); cycles = 5; break; // INR A
                 case 0x3D: _r.A = Dec8Bit(_r.A); cycles = 5; break; // DCR A
                 case 0x3E: _r.A = ReadByte(_pc++); cycles = 7; break; // MVI A,d8
-                case 0x3F: goto default;
+                case 0x3F: _r.F ^= C; cycles = 4; break; // CMC
                 case 0x40: cycles = 5; break; // MOV B,B
                 case 0x41: _r.B = _r.C; cycles = 5; break; // MOV B,C
                 case 0x42: _r.B = _r.D; cycles = 5; break; // MOV B,D
@@ -257,71 +257,71 @@ namespace elbsi_core.CPU
                 case 0x7C: _r.A = _r.H; cycles = 5; break; // MOV A,H
                 case 0x7D: _r.A = _r.L; cycles = 5; break; // MOV A,L
                 case 0x7E: _r.A = ReadByte(_r.HL); cycles = 7; break; // MOV A,M
-                case 0x7F: goto default;
-                case 0x80: goto default;
-                case 0x81: goto default;
-                case 0x82: goto default;
-                case 0x83: goto default;
-                case 0x84: goto default;
-                case 0x85: goto default;
-                case 0x86: goto default;
-                case 0x87: goto default;
-                case 0x88: goto default;
-                case 0x89: goto default;
-                case 0x8A: goto default;
-                case 0x8B: goto default;
-                case 0x8C: goto default;
-                case 0x8D: goto default;
-                case 0x8E: goto default;
-                case 0x8F: goto default;
-                case 0x90: goto default;
-                case 0x91: goto default;
-                case 0x92: goto default;
-                case 0x93: goto default;
-                case 0x94: goto default;
-                case 0x95: goto default;
-                case 0x96: goto default;
-                case 0x97: goto default;
-                case 0x98: goto default;
-                case 0x99: goto default;
-                case 0x9A: goto default;
-                case 0x9B: goto default;
-                case 0x9C: goto default;
-                case 0x9D: goto default;
-                case 0x9E: goto default;
-                case 0x9F: goto default;
-                case 0xA0: goto default;
-                case 0xA1: goto default;
-                case 0xA2: goto default;
-                case 0xA3: goto default;
-                case 0xA4: goto default;
-                case 0xA5: goto default;
-                case 0xA6: goto default;
-                case 0xA7: goto default;
-                case 0xA8: goto default;
-                case 0xA9: goto default;
-                case 0xAA: goto default;
-                case 0xAB: goto default;
-                case 0xAC: goto default;
-                case 0xAD: goto default;
-                case 0xAE: goto default;
-                case 0xAF: goto default;
-                case 0xB0: goto default;
-                case 0xB1: goto default;
-                case 0xB2: goto default;
-                case 0xB3: goto default;
-                case 0xB4: goto default;
-                case 0xB5: goto default;
-                case 0xB6: goto default;
-                case 0xB7: goto default;
-                case 0xB8: goto default;
-                case 0xB9: goto default;
-                case 0xBA: goto default;
-                case 0xBB: goto default;
-                case 0xBC: goto default;
-                case 0xBD: goto default;
-                case 0xBE: goto default;
-                case 0xBF: goto default;
+                case 0x7F: cycles = 5; break; // MOV A,A
+                case 0x80: (_r.A, _r.F) = Add8Bit(_r.A, _r.B); cycles = 5; break; // ADD B
+                case 0x81: (_r.A, _r.F) = Add8Bit(_r.A, _r.C); cycles = 5; break; // ADD C
+                case 0x82: (_r.A, _r.F) = Add8Bit(_r.A, _r.D); cycles = 5; break; // ADD D
+                case 0x83: (_r.A, _r.F) = Add8Bit(_r.A, _r.E); cycles = 5; break; // ADD E
+                case 0x84: (_r.A, _r.F) = Add8Bit(_r.A, _r.H); cycles = 5; break; // ADD H
+                case 0x85: (_r.A, _r.F) = Add8Bit(_r.A, _r.L); cycles = 5; break; // ADD L
+                case 0x86: (_r.A, _r.F) = Add8Bit(_r.A, ReadByte(_r.HL)); cycles = 7; break; // ADD M
+                case 0x87: (_r.A, _r.F) = Add8Bit(_r.A, _r.A); cycles = 5; break; // ADD A
+                case 0x88: (_r.A, _r.F) = Add8Bit(_r.A, _r.B, _r.F[C]); cycles = 5; break; // ADC B
+                case 0x89: (_r.A, _r.F) = Add8Bit(_r.A, _r.C, _r.F[C]); cycles = 5; break; // ADC C
+                case 0x8A: (_r.A, _r.F) = Add8Bit(_r.A, _r.D, _r.F[C]); cycles = 5; break; // ADC D
+                case 0x8B: (_r.A, _r.F) = Add8Bit(_r.A, _r.E, _r.F[C]); cycles = 5; break; // ADC E
+                case 0x8C: (_r.A, _r.F) = Add8Bit(_r.A, _r.H, _r.F[C]); cycles = 5; break; // ADC H
+                case 0x8D: (_r.A, _r.F) = Add8Bit(_r.A, _r.L, _r.F[C]); cycles = 5; break; // ADC L
+                case 0x8E: (_r.A, _r.F) = Add8Bit(_r.A, ReadByte(_r.HL), _r.F[C]); cycles = 7; break; // ADC M
+                case 0x8F: (_r.A, _r.F) = Add8Bit(_r.A, _r.A, _r.F[C]); cycles = 5; break; // ADC A
+                case 0x90: (_r.A, _r.F) = Sub8Bit(_r.A, _r.B); cycles = 5; break; // SUB B
+                case 0x91: (_r.A, _r.F) = Sub8Bit(_r.A, _r.C); cycles = 5; break; // SUB C
+                case 0x92: (_r.A, _r.F) = Sub8Bit(_r.A, _r.D); cycles = 5; break; // SUB D
+                case 0x93: (_r.A, _r.F) = Sub8Bit(_r.A, _r.E); cycles = 5; break; // SUB E
+                case 0x94: (_r.A, _r.F) = Sub8Bit(_r.A, _r.H); cycles = 5; break; // SUB H
+                case 0x95: (_r.A, _r.F) = Sub8Bit(_r.A, _r.L); cycles = 5; break; // SUB L
+                case 0x96: (_r.A, _r.F) = Sub8Bit(_r.A, ReadByte(_r.HL)); cycles = 7; break; // XRA  M
+                case 0x97: (_r.A, _r.F) = Sub8Bit(_r.A, _r.A); cycles = 5; break; // XRA  A
+                case 0x98: (_r.A, _r.F) = Sub8Bit(_r.A, _r.B, _r.F[C]); cycles = 5; break; // SBB B
+                case 0x99: (_r.A, _r.F) = Sub8Bit(_r.A, _r.C, _r.F[C]); cycles = 5; break; // SBB C
+                case 0x9A: (_r.A, _r.F) = Sub8Bit(_r.A, _r.D, _r.F[C]); cycles = 5; break; // SBB D
+                case 0x9B: (_r.A, _r.F) = Sub8Bit(_r.A, _r.E, _r.F[C]); cycles = 5; break; // SBB E
+                case 0x9C: (_r.A, _r.F) = Sub8Bit(_r.A, _r.H, _r.F[C]); cycles = 5; break; // SBB H
+                case 0x9D: (_r.A, _r.F) = Sub8Bit(_r.A, _r.L, _r.F[C]); cycles = 5; break; // SBB L
+                case 0x9E: (_r.A, _r.F) = Sub8Bit(_r.A, ReadByte(_r.HL), _r.F[C]); cycles = 7; break; // SBB M
+                case 0x9F: (_r.A, _r.F) = Sub8Bit(_r.A, _r.A, _r.F[C]); cycles = 5; break; // SBB A 
+                case 0xA0: (_r.A, _r.F) = And8Bit(_r.A, _r.B); cycles = 5; break; // ANA B
+                case 0xA1: (_r.A, _r.F) = And8Bit(_r.A, _r.C); cycles = 5; break; // ANA C
+                case 0xA2: (_r.A, _r.F) = And8Bit(_r.A, _r.D); cycles = 5; break; // ANA D
+                case 0xA3: (_r.A, _r.F) = And8Bit(_r.A, _r.E); cycles = 5; break; // ANA E
+                case 0xA4: (_r.A, _r.F) = And8Bit(_r.A, _r.H); cycles = 5; break; // ANA H
+                case 0xA5: (_r.A, _r.F) = And8Bit(_r.A, _r.L); cycles = 5; break; // ANA L
+                case 0xA6: (_r.A, _r.F) = And8Bit(_r.A, ReadByte(_r.HL)); cycles = 7; break; // ANA M
+                case 0xA7: (_r.A, _r.F) = And8Bit(_r.A, _r.A); cycles = 5; break; // ANA A
+                case 0xA8: (_r.A, _r.F) = Xor8Bit(_r.A, _r.B); cycles = 5; break; // XRA B
+                case 0xA9: (_r.A, _r.F) = Xor8Bit(_r.A, _r.C); cycles = 5; break; // XRA C
+                case 0xAA: (_r.A, _r.F) = Xor8Bit(_r.A, _r.D); cycles = 5; break; // XRA D
+                case 0xAB: (_r.A, _r.F) = Xor8Bit(_r.A, _r.E); cycles = 5; break; // XRA E
+                case 0xAC: (_r.A, _r.F) = Xor8Bit(_r.A, _r.H); cycles = 5; break; // XRA H
+                case 0xAD: (_r.A, _r.F) = Xor8Bit(_r.A, _r.L); cycles = 5; break; // XRA L
+                case 0xAE: (_r.A, _r.F) = Xor8Bit(_r.A, ReadByte(_r.HL)); cycles = 7; break; // XRA M
+                case 0xAF: (_r.A, _r.F) = Xor8Bit(_r.A, _r.A); cycles = 5; break; // XRA A
+                case 0xB0: (_r.A, _r.F) = Or8Bit(_r.A, _r.B); cycles = 5; break; // ORA B
+                case 0xB1: (_r.A, _r.F) = Or8Bit(_r.A, _r.C); cycles = 5; break; // ORA C
+                case 0xB2: (_r.A, _r.F) = Or8Bit(_r.A, _r.D); cycles = 5; break; // ORA D
+                case 0xB3: (_r.A, _r.F) = Or8Bit(_r.A, _r.E); cycles = 5; break; // ORA E
+                case 0xB4: (_r.A, _r.F) = Or8Bit(_r.A, _r.H); cycles = 5; break; // ORA H
+                case 0xB5: (_r.A, _r.F) = Or8Bit(_r.A, _r.L); cycles = 5; break; // ORA L
+                case 0xB6: (_r.A, _r.F) = Or8Bit(_r.A, ReadByte(_r.HL)); cycles = 7; break; // ORA M
+                case 0xB7: (_r.A, _r.F) = Or8Bit(_r.A, _r.A); cycles = 5; break; // ORA A
+                case 0xB8: _r.F = Compare8Bit(_r.A, _r.B); cycles = 5; break; // CMP B
+                case 0xB9: _r.F = Compare8Bit(_r.A, _r.C); cycles = 5; break; // CMP C
+                case 0xBA: _r.F = Compare8Bit(_r.A, _r.D); cycles = 5; break; // CMP D
+                case 0xBB: _r.F = Compare8Bit(_r.A, _r.E); cycles = 5; break; // CMP E
+                case 0xBC: _r.F = Compare8Bit(_r.A, _r.H); cycles = 5; break; // CMP H
+                case 0xBD: _r.F = Compare8Bit(_r.A, _r.L); cycles = 5; break; // CMP L
+                case 0xBE: _r.F = Compare8Bit(_r.A, ReadByte(_r.HL)); cycles = 7; break; // CMP M
+                case 0xBF: _r.F = Compare8Bit(_r.A, _r.A); cycles = 5; break; // CMP A
                 case 0xC0: cycles = Return(!_r.F[Z]); break; // RNZ
                 case 0xC1: _r.BC = PopWord(); cycles = 10; break; // POP B
                 case 0xC2: JumpImmediate(!_r.F[Z]); cycles = 10; break; // JNZ a16
@@ -357,7 +357,7 @@ namespace elbsi_core.CPU
                 case 0xE0: cycles = Return(!_r.F[P]); break; // RPO
                 case 0xE1: _r.HL = PopWord(); cycles = 10; break; // POP H
                 case 0xE2: JumpImmediate(!_r.F[P]); cycles = 10; break; // JPO a16
-                case 0xE3: goto default;
+                case 0xE3: { ushort temp = ReadWord(_sp); WriteWord(_sp, _r.HL); _r.HL = temp; } cycles = 18; break; // XTHL
                 case 0xE4: cycles = CallImmediate(!_r.F[P]); break; // CPO a16
                 case 0xE5: PushWord(_r.HL); cycles = 11; break; // PUSH H
                 case 0xE6: (_r.A, _r.F) = And8Bit(_r.A, ReadByte(_pc++)); cycles = 7; break; // ANI d8
@@ -365,7 +365,7 @@ namespace elbsi_core.CPU
                 case 0xE8: cycles = Return(_r.F[P]); break; // RPE
                 case 0xE9: _pc = _r.HL; cycles = 5; break; // PCHL
                 case 0xEA: JumpImmediate(_r.F[P]); cycles = 10; break; // JPE a16
-                case 0xEB: goto default;
+                case 0xEB: { ushort temp = _r.DE; _r.DE = _r.HL; _r.HL = temp; } cycles = 5; break; // XCHG;
                 case 0xEC: cycles = CallImmediate(_r.F[P]); break; // CPE a16
                 case 0xED: goto default;
                 case 0xEE: (_r.A, _r.F) = Xor8Bit(_r.A, ReadByte(_pc++)); cycles = 7; break; // XRI d8
@@ -379,7 +379,7 @@ namespace elbsi_core.CPU
                 case 0xF6: (_r.A, _r.F) = Or8Bit(_r.A, ReadByte(_pc++)); cycles = 7; break; // ORI d8
                 case 0xF7: goto default;
                 case 0xF8: cycles = Return(_r.F[S]); break; // RM
-                case 0xF9: goto default;
+                case 0xF9: _sp = _r.HL; cycles = 5; break; // SPHL
                 case 0xFA: JumpImmediate(_r.F[S]); cycles = 10; break; // JM a16
                 case 0xFB: goto default;
                 case 0xFC: cycles = CallImmediate(_r.F[S]); break; // CM a16
@@ -441,6 +441,43 @@ namespace elbsi_core.CPU
             _r.F |= (flags & ~C);
 
             return result;
+        }
+
+        private ushort Add16Bit(ushort a, ushort b)
+        {
+            byte hi, lo;
+            StatusFlags flags;
+
+            (lo, flags) = Add8Bit((byte)(a >> 0), (byte)(b >> 0));
+
+            (hi, flags) = Add8Bit((byte)(a >> 8), (byte)(b >> 8), flags[C]);
+
+            _r.F[C] = flags[C];
+
+            ushort result = (ushort)(hi << 8 | lo);
+
+            return result;
+        }
+
+        private void DecimalAdjustAccumulator()
+        {
+            bool carry = false;
+            byte correctionFactor = 0;
+
+            if ((_r.A & 0x0f) > 0x09 || _r.F[H])
+            {
+                correctionFactor |= 0x06;
+            }
+
+            if ((_r.A) > 0x99 || _r.F[C])
+            {
+                correctionFactor |= 0x60;
+                carry = true;
+            }
+
+            (_r.A, _r.F) = Add8Bit(_r.A, correctionFactor);
+
+            _r.F[C] = carry;
         }
 
         #endregion

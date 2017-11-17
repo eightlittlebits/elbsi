@@ -12,6 +12,7 @@ namespace elbsi_console
         {
             try
             {
+                RunTest(@"roms\TEST.COM");
                 RunTest(@"roms\8080PRE.COM");
             }
             catch (NotImplementedException ex)
