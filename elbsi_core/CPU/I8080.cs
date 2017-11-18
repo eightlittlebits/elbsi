@@ -562,7 +562,8 @@ namespace elbsi_core.CPU
         {
             int result = a & b;
 
-            StatusFlags flags = FlagsSZP[result] | ((a | b) & H);
+            StatusFlags flags = FlagsSZP[result];
+            flags[H] = ((a | b) & 0x08) == 0x08;
 
             return ((byte)result, flags);
         }
