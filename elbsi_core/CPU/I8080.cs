@@ -452,9 +452,9 @@ namespace elbsi_core.CPU
 
                 case 0xED: goto default;
 
-                case 0xF1: _r.PSW = PopWord(); cycles = 10; break; // POP PSW
+                case 0xF1: _r.PSW = (ushort)((PopWord() & 0xFFD5) | B1); cycles = 10; break; // POP PSW - mask to clear bits 5, 3, 1 and set bit 1
                 case 0xF3: _interruptEnabled = false; cycles = 4; break; // DI
-                case 0xF5: PushWord(_r.PSW); cycles = 11; break; // PUSH PSW
+                case 0xF5: PushWord((ushort)((_r.PSW & 0xFFD5) | B1)); cycles = 11; break; // PUSH PSW - mask to clear bits 5, 3, 1 and set bit 1
 
                 case 0xF9: _sp = _r.HL; cycles = 5; break; // SPHL
                 case 0xFB: _interruptEnabled = true; cycles = 4; break; // EI
