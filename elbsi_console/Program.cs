@@ -12,8 +12,11 @@ namespace elbsi_console
         {
             try
             {
-                RunTest(@"roms\TEST.COM");
-                RunTest(@"roms\8080PRE.COM");
+                // roms\CPUTEST.COM roms\TEST.COM roms\8080PRE.COM roms\8080EXM.COM
+                foreach (var file in args)
+                {
+                    RunTest(file);
+                }
             }
             catch (NotImplementedException ex)
             {
@@ -38,6 +41,10 @@ namespace elbsi_console
             {
                 PC = 0x100
             };
+
+            Console.WriteLine();
+            Console.WriteLine("***** Running rom {0} *****", Path.GetFileName(filename));
+            Console.WriteLine();
 
             while (true)
             {
@@ -89,6 +96,7 @@ namespace elbsi_console
                     Console.WriteLine();
                     Console.WriteLine();
                     Console.WriteLine("Jump to 0x0000 from 0x{0:X4}", pc);
+                    
                     return;
                 }
             }
