@@ -233,7 +233,6 @@ namespace elbsi_core.CPU
                 case 0x12: WriteByte(_r.DE, _r.A); cycles = 7; break; // STAX D
 
                 case 0xEB: { ushort temp = _r.DE; _r.DE = _r.HL; _r.HL = temp; } cycles = 5; break; // XCHG;
-                case 0xE3: { ushort temp = ReadWord(_sp); WriteWord(_sp, _r.HL); _r.HL = temp; } cycles = 18; break; // XTHL
 
                 #endregion
 
@@ -430,6 +429,29 @@ namespace elbsi_core.CPU
 
                 #endregion
 
+                #region stack, i/0, and machine control group
+
+                case 0xC5: PushWord(_r.BC); cycles = 11; break; // PUSH B
+                case 0xD5: PushWord(_r.DE); cycles = 11; break; // PUSH D
+                case 0xE5: PushWord(_r.HL); cycles = 11; break; // PUSH H
+                case 0xF5: PushWord((ushort)((_r.PSW & 0xFFD5) | B1)); cycles = 11; break; // PUSH PSW - mask to clear bits 5, 3, 1 and set bit 1
+
+                case 0xC1: _r.BC = PopWord(); cycles = 10; break; // POP B
+                case 0xD1: _r.DE = PopWord(); cycles = 10; break; // POP D
+                case 0xE1: _r.HL = PopWord(); cycles = 10; break; // POP H
+                case 0xF1: _r.PSW = (ushort)((PopWord() & 0xFFD5) | B1); cycles = 10; break; // POP PSW - mask to clear bits 5, 3, 1 and set bit 1
+
+                case 0xE3: { ushort temp = ReadWord(_sp); WriteWord(_sp, _r.HL); _r.HL = temp; } cycles = 18; break; // XTHL
+                case 0xF9: _sp = _r.HL; cycles = 5; break; // SPHL
+
+                case 0xDB: goto default; // IN
+                case 0xD3: goto default; // OUT
+
+                case 0xFB: _interruptEnabled = true; cycles = 4; break; // EI
+                case 0xF3: _interruptEnabled = false; cycles = 4; break; // DI
+
+                case 0x76: _halted = true; cycles = 7; break; // HLT
+
                 case 0x00: cycles = 4; break; // NOP
                 case 0x08: cycles = 4; break; // *NOP
                 case 0x10: cycles = 4; break; // *NOP
@@ -438,28 +460,8 @@ namespace elbsi_core.CPU
                 case 0x28: cycles = 4; break; // *NOP
                 case 0x30: cycles = 4; break; // *NOP
                 case 0x38: cycles = 4; break; // *NOP
-                case 0x76: _halted = true; cycles = 7; break; // HLT
-                case 0xC1: _r.BC = PopWord(); cycles = 10; break; // POP B
-                case 0xC5: PushWord(_r.BC); cycles = 11; break; // PUSH B
 
-
-                case 0xD1: _r.DE = PopWord(); cycles = 10; break; // POP D
-                case 0xD3: goto default; // OUT
-                case 0xD5: PushWord(_r.DE); cycles = 11; break; // PUSH D
-                case 0xDB: goto default; // IN
-
-                case 0xE1: _r.HL = PopWord(); cycles = 10; break; // POP H
-
-                case 0xE5: PushWord(_r.HL); cycles = 11; break; // PUSH H
-
-
-                case 0xF1: _r.PSW = (ushort)((PopWord() & 0xFFD5) | B1); cycles = 10; break; // POP PSW - mask to clear bits 5, 3, 1 and set bit 1
-                case 0xF3: _interruptEnabled = false; cycles = 4; break; // DI
-                case 0xF5: PushWord((ushort)((_r.PSW & 0xFFD5) | B1)); cycles = 11; break; // PUSH PSW - mask to clear bits 5, 3, 1 and set bit 1
-
-                case 0xF9: _sp = _r.HL; cycles = 5; break; // SPHL
-                case 0xFB: _interruptEnabled = true; cycles = 4; break; // EI
-
+                #endregion
 
                 default: throw new NotImplementedException($"Unimplemented opcode: 0x{opcode:X2} at address 0x{_pc - 1:X4}");
             }
