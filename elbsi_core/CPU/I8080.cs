@@ -380,6 +380,7 @@ namespace elbsi_core.CPU
                 #region branch group
 
                 case 0xC3: JumpImmediate(); cycles = 10; break; // JMP a16
+                case 0xCB: JumpImmediate(); cycles = 10; break; // *JMP a16
 
                 case 0xDA: JumpImmediate(_r.F[C]); cycles = 10; break; // JC a16
                 case 0xD2: JumpImmediate(!_r.F[C]); cycles = 10; break; // JNC a16
@@ -391,6 +392,9 @@ namespace elbsi_core.CPU
                 case 0xE2: JumpImmediate(!_r.F[P]); cycles = 10; break; // JPO a16
 
                 case 0xCD: CallImmediate(); cycles = 17; break; // CALL a16
+                case 0xDD: CallImmediate(); cycles = 17; break; // *CALL a16
+                case 0xED: CallImmediate(); cycles = 17; break; // *CALL a16
+                case 0xFD: CallImmediate(); cycles = 17; break; // *CALL a16
 
                 case 0xDC: cycles = CallImmediate(_r.F[C]); break; // CC a16
                 case 0xD4: cycles = CallImmediate(!_r.F[C]); break; // CNC a16
@@ -402,6 +406,7 @@ namespace elbsi_core.CPU
                 case 0xE4: cycles = CallImmediate(!_r.F[P]); break; // CPO a16
 
                 case 0xC9: Return(); cycles = 10; break; // RET
+                case 0xD9: Return(); cycles = 10; break; // *RET
 
                 case 0xD8: cycles = Return(_r.F[C]); break; // RC a16
                 case 0xD0: cycles = Return(!_r.F[C]); break; // RNC a16
@@ -437,20 +442,16 @@ namespace elbsi_core.CPU
                 case 0xC1: _r.BC = PopWord(); cycles = 10; break; // POP B
                 case 0xC5: PushWord(_r.BC); cycles = 11; break; // PUSH B
 
-                case 0xCB: goto default;
 
                 case 0xD1: _r.DE = PopWord(); cycles = 10; break; // POP D
-                case 0xD3: goto default;
+                case 0xD3: goto default; // OUT
                 case 0xD5: PushWord(_r.DE); cycles = 11; break; // PUSH D
-                case 0xD9: goto default;
-                case 0xDB: goto default;
-                case 0xDD: goto default;
+                case 0xDB: goto default; // IN
 
                 case 0xE1: _r.HL = PopWord(); cycles = 10; break; // POP H
 
                 case 0xE5: PushWord(_r.HL); cycles = 11; break; // PUSH H
 
-                case 0xED: goto default;
 
                 case 0xF1: _r.PSW = (ushort)((PopWord() & 0xFFD5) | B1); cycles = 10; break; // POP PSW - mask to clear bits 5, 3, 1 and set bit 1
                 case 0xF3: _interruptEnabled = false; cycles = 4; break; // DI
@@ -458,7 +459,6 @@ namespace elbsi_core.CPU
 
                 case 0xF9: _sp = _r.HL; cycles = 5; break; // SPHL
                 case 0xFB: _interruptEnabled = true; cycles = 4; break; // EI
-                case 0xFD: goto default;
 
 
                 default: throw new NotImplementedException($"Unimplemented opcode: 0x{opcode:X2} at address 0x{_pc - 1:X4}");
