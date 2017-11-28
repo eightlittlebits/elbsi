@@ -429,7 +429,7 @@ namespace elbsi_core.CPU
 
                 #endregion
 
-                #region stack, i/0, and machine control group
+                #region stack, i/o, and machine control group
 
                 case 0xC5: PushWord(_r.BC); cycles = 11; break; // PUSH B
                 case 0xD5: PushWord(_r.DE); cycles = 11; break; // PUSH D
@@ -444,8 +444,8 @@ namespace elbsi_core.CPU
                 case 0xE3: { ushort temp = ReadWord(_sp); WriteWord(_sp, _r.HL); _r.HL = temp; } cycles = 18; break; // XTHL
                 case 0xF9: _sp = _r.HL; cycles = 5; break; // SPHL
 
-                case 0xDB: goto default; // IN
-                case 0xD3: goto default; // OUT
+                case 0xDB: _r.A = _bus.In(ReadByte(_pc++)); cycles = 10; break; // IN
+                case 0xD3: _bus.Out(ReadByte(_pc++), _r.A); cycles = 10; break; // OUT
 
                 case 0xFB: _interruptEnabled = true; cycles = 4; break; // EI
                 case 0xF3: _interruptEnabled = false; cycles = 4; break; // DI
