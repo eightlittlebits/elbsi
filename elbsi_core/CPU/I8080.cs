@@ -14,9 +14,9 @@ namespace elbsi_core.CPU
         private ushort _pc;
         private ushort _sp;
 
-#pragma warning disable CS0414
-        private bool _interruptEnabled;
-#pragma warning restore CS0414
+        private bool _interruptsEnabled;
+        private int _requestedInterrupt;
+
         private bool _halted;
 
         internal ushort PC { get => _pc; set => _pc = value; }
@@ -118,12 +118,43 @@ namespace elbsi_core.CPU
 
         #endregion
 
-        internal void ExecuteInstruction()
+        #region interrupt processing
+
+        internal void RequestInterrupt(int interrupt)
         {
-            if (!_halted)
+            if (_interruptsEnabled)
+            {
+                _requestedInterrupt = interrupt;
+            }
+        }
+
+        private void ProcessInterrupts()
+        {
+            if (_interruptsEnabled && _requestedInterrupt != 0)
+            {
+                _halted = false;
+                
+                PushWord(_pc);
+                _pc = (ushort)(_requestedInterrupt * 0x08);
+
+                _requestedInterrupt = 0;
+            }
+        }
+
+        #endregion
+
+        internal int ExecuteInstruction()
+        {
+            ProcessInterrupts();
+
+            if (_halted)
+            {
+                return 4;
+            }
+            else
             {
                 byte opcode = ReadByte(_pc++);
-                ExecuteOpcode(opcode);
+                return ExecuteOpcode(opcode);
             }
         }
 
@@ -447,8 +478,8 @@ namespace elbsi_core.CPU
                 case 0xDB: _r.A = _bus.In(ReadByte(_pc++)); cycles = 10; break; // IN
                 case 0xD3: _bus.Out(ReadByte(_pc++), _r.A); cycles = 10; break; // OUT
 
-                case 0xFB: _interruptEnabled = true; cycles = 4; break; // EI
-                case 0xF3: _interruptEnabled = false; cycles = 4; break; // DI
+                case 0xFB: _interruptsEnabled = true; cycles = 4; break; // EI
+                case 0xF3: _interruptsEnabled = false; cycles = 4; break; // DI
 
                 case 0x76: _halted = true; cycles = 7; break; // HLT
 
