@@ -27,5 +27,7 @@ namespace elbsi_core
 
         internal byte In(byte port) => _inputIO[port]?.In(port) ?? 0x00;
         internal void Out(byte port, byte value) => _outputIO[port]?.Out(port, value);
+
+        internal void CopyMemory(byte[] destination, int offset, int length) => Buffer.BlockCopy(_memory, offset, destination, 0, length);
     }
 }
