@@ -7,6 +7,7 @@ using System.Threading;
 using System.Windows.Forms;
 using elbemu_utils;
 using elbsi_core;
+using elbsi_core.CPU;
 
 namespace elbsi_ui
 {
@@ -145,7 +146,14 @@ namespace elbsi_ui
         {
             long updateTimeStart = Stopwatch.GetTimestamp();
 
-            _invaders.RunFrame();
+            try
+            {
+                _invaders.RunFrame();
+            }
+            catch (InfiniteLoopException)
+            {
+                _messagePump.Stop();
+            }
 
             long updateTimeEnd = Stopwatch.GetTimestamp();
 

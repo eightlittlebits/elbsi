@@ -4,7 +4,7 @@ using System.Runtime.Serialization;
 namespace elbsi_core.CPU
 {
     [Serializable]
-    internal class InfiniteLoopException : Exception
+    public class InfiniteLoopException : Exception
     {
         public InfiniteLoopException()
         {
