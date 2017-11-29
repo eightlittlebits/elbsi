@@ -53,6 +53,7 @@
     <Compile Include="CPU\Registers.cs" />
     <Compile Include="CPU\StatusFlags.cs" />
     <Compile Include="IInputIODevice.cs" />
+    <Compile Include="InputState.cs" />
     <Compile Include="IOutputIODevice.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ShiftRegister.cs" />

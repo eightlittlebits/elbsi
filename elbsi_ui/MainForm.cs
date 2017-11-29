@@ -32,6 +32,7 @@ namespace elbsi_ui
         private uint[] _overlay;
 
         private SpaceInvaders _invaders;
+        private InputState _input;
 
         public MainForm()
         {
@@ -80,6 +81,7 @@ namespace elbsi_ui
             _display = new byte[0x1C00];
 
             _invaders = new SpaceInvaders();
+            _input = new InputState();
 
             _invaders.LoadRom(0x0000, File.ReadAllBytes(@"roms\invaders\invaders.h"));
             _invaders.LoadRom(0x0800, File.ReadAllBytes(@"roms\invaders\invaders.g"));
@@ -131,6 +133,27 @@ namespace elbsi_ui
         {
             switch (key)
             {
+                case Keys.Space:
+                    _input.Credit = pressed;
+                    break;
+
+                case Keys.D1:
+                    _input.P1Start = pressed;
+                    break;
+
+                case Keys.Left:
+                    _input.P1Left = pressed;
+                    break;
+
+                case Keys.Right:
+                    _input.P1Right = pressed;
+                    break;
+
+                case Keys.Up:
+                    _input.P1Shot = pressed;
+                    break;
+
+
                 case Keys.Tab:
                     _limitFrameRate = !pressed;
                     break;
@@ -148,7 +171,7 @@ namespace elbsi_ui
 
             try
             {
-                _invaders.RunFrame();
+                _invaders.RunFrame(_input);
             }
             catch (InfiniteLoopException)
             {
