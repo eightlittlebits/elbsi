@@ -28,6 +28,7 @@ namespace elbsi_ui
         private GdiRenderer _renderer;
         private DirectBitmap _displayBuffer;
         private byte[] _display;
+        private uint[] _overlay;
 
         private SpaceInvaders _invaders;
 
@@ -37,6 +38,32 @@ namespace elbsi_ui
 
             _stopwatchFrequency = Stopwatch.Frequency;
             _targetFrameTicks = _stopwatchFrequency / _targetFramesPerSecond;
+
+            InitOverlay();
+        }
+
+        private void InitOverlay()
+        {
+            _overlay = new uint[_screenWidth * _screenHeight];
+
+            for (int y = 0; y < _screenHeight; y++)
+            {
+                for (int x = 0; x < _screenWidth; x++)
+                {
+                    if (y >= 32 && y < 64)
+                    {
+                        _overlay[y * _screenWidth + x] = 0xFFFF0000;
+                    }
+                    else if (y >= 184 && (y <= 240 || (x >= 16 && x < 134)))
+                    {
+                        _overlay[y * _screenWidth + x] = 0xFF00FF00;
+                    }
+                    else
+                    {
+                        _overlay[y * _screenWidth + x] = 0xFFFFFFFF;
+                    }
+                }
+            }
         }
 
         protected override void OnLoad(EventArgs e)
@@ -176,15 +203,13 @@ namespace elbsi_ui
             {
                 for (int x = 0; x < displayWidth; x++)
                 {
-                    int outx = y;
-                    int outy = x*8;
-                                        
                     byte input = _display[y * 32 + x];
+                    int outx = y;
 
                     for (int i = 0; i < 8; i++)
                     {
-                        //output[((outy + i) * 224) + outx] = ((input >> 7 - i) & 0x01) == 0x01 ? 0xFFFFFFFF : 0xFF000000; // <-- upside down fun!
-                        output[((255 - outy - i) * 224) + outx] = ((input >> i) & 0x01) == 0x01 ? 0xFFFFFFFF : 0xFF000000;
+                        int outy = 255 - (x * 8) - i;
+                        output[(outy * 224) + outx] = ((input >> i) & 0x01) == 0x01 ? _overlay[(outy * 224) + outx] : 0xFF000000;                        
                     }
                 }
             }
