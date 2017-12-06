@@ -11,9 +11,24 @@ namespace elbemu_utils
     {
         private Control _renderControl;
 
+        private int _controlWidth, _controlHeight;
+
         public GdiRenderer(Control renderControl)
         {
             _renderControl = renderControl;
+
+            _renderControl.Resize += RenderControlResized;
+            
+            _controlWidth = renderControl.ClientSize.Width;
+            _controlHeight = renderControl.ClientSize.Height;
+        }
+
+        private void RenderControlResized(object sender, EventArgs e)
+        {
+            Control control = (Control)sender;
+
+            _controlWidth = control.ClientSize.Width;
+            _controlHeight = control.ClientSize.Height;
         }
 
         public void DrawBitmap(Bitmap bitmap)
@@ -35,7 +50,7 @@ namespace elbemu_utils
                     hOldObject = Gdi32.SelectObject(hdcSrc, hBitmap);
                     if (hOldObject == IntPtr.Zero)
                         throw new Win32Exception();
-                    if (!Gdi32.StretchBlt(hdcDest, 0, 0, _renderControl.Width, _renderControl.Height,
+                    if (!Gdi32.StretchBlt(hdcDest, 0, 0, _controlWidth, _controlHeight,
                                             hdcSrc, 0, 0, bitmap.Width, bitmap.Height,
                                             Gdi32.TernaryRasterOperations.SRCCOPY))
                         throw new Win32Exception();
