@@ -22,7 +22,7 @@ namespace elbemu_utils
 
         public  void Pause() => _running = false;
 
-        public  void Resume() => _running = _initialised && true;
+        public  void Resume() => _running = _initialised;
 
         public  void Stop()
         {
