@@ -34,17 +34,37 @@ namespace elbsi_ui
         private SpaceInvaders _invaders;
         private InputState _input;
 
+        private bool _running;
+
         public MainForm()
         {
-            InitializeComponent();
-
             _stopwatchFrequency = Stopwatch.Frequency;
             _targetFrameTicks = _stopwatchFrequency / _targetFramesPerSecond;
 
-            InitOverlay();
+            InitializeComponent();
+            SetFormStyles();
+            Menu = BuildMainMenu();
+
+            _messagePump = new MessagePump();
+
+            _renderer = new GdiRenderer(this);
+            _displayBuffer = new DirectBitmap(_screenWidth, _screenHeight);
+            _display = new byte[0x1C00];
+
+            _invaders = new SpaceInvaders();
+            _input = new InputState();
+
+            InitializeOverlay();
+
+            _invaders.LoadRom(0x0000, File.ReadAllBytes(@"roms\invaders\invaders.h"));
+            //_invaders.LoadRom(0x0000, File.ReadAllBytes(@"roms\invaders_test_rom\Sitest_716.bin"));
+            //_invaders.LoadRom(0x0000, File.ReadAllBytes(@"roms\\test_rom_space_invd_v1_2_source\test.h"));
+            _invaders.LoadRom(0x0800, File.ReadAllBytes(@"roms\invaders\invaders.g"));
+            _invaders.LoadRom(0x1000, File.ReadAllBytes(@"roms\invaders\invaders.f"));
+            _invaders.LoadRom(0x1800, File.ReadAllBytes(@"roms\invaders\invaders.e"));
         }
 
-        private void InitOverlay()
+        private void InitializeOverlay()
         {
             _overlay = new uint[_screenWidth * _screenHeight];
 
@@ -68,45 +88,79 @@ namespace elbsi_ui
             }
         }
 
+        private MainMenu BuildMainMenu()
+        {
+            MainMenu menu = new MainMenu(new[] {
+                                             new MenuItem("&File", new[] {
+                                                 new MenuItem("&Open"),
+                                                 new MenuItem("-"),
+                                                 new MenuItem("E&xit", CloseForm)
+                                             })
+                                         });
+
+            return menu;
+        }
+
+        private void SetFormStyles()
+        {
+            SetStyle(ControlStyles.ResizeRedraw, true);
+            SetStyle(ControlStyles.OptimizedDoubleBuffer, true);
+
+            // these settings as applied below conflict with the documents,
+            // we're ok in this instance though as we're rendering the control
+            // ourselves constantly. We don't need windows to be raising either
+            // the WM_ERASEBKGND or WM_PAINT events. Seetting 
+            // AllPaintingInWmPaint to true prevents WM_ERASEBKGND and setting
+            // UserPaint to false prevents WM_PAINT
+            SetStyle(ControlStyles.AllPaintingInWmPaint, true);
+            SetStyle(ControlStyles.UserPaint, false);
+
+            UpdateStyles();
+        }
+
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
 
-            _messagePump = new MessagePump();
-
             ClientSize = new Size(_screenWidth * 2, _screenHeight * 2);
 
-            _renderer = new GdiRenderer(_displayPanel);
-            _displayBuffer = new DirectBitmap(_screenWidth, _screenHeight);
-            _display = new byte[0x1C00];
-
-            _invaders = new SpaceInvaders();
-            _input = new InputState();
-
-            _invaders.LoadRom(0x0000, File.ReadAllBytes(@"roms\invaders\invaders.h"));
-            _invaders.LoadRom(0x0800, File.ReadAllBytes(@"roms\invaders\invaders.g"));
-            _invaders.LoadRom(0x1000, File.ReadAllBytes(@"roms\invaders\invaders.f"));
-            _invaders.LoadRom(0x1800, File.ReadAllBytes(@"roms\invaders\invaders.e"));
-
             _messagePump.RunWhileIdle(Frame);
+            _running = true;
+        }
+
+        private void CloseForm(object sender, EventArgs e)
+        {
+            Close();
         }
 
         protected override void OnActivated(EventArgs e)
         {
             base.OnActivated(e);
-            _messagePump.Resume();
+
+            if (_running)
+            {
+                _messagePump.Resume();
+            }
         }
 
         protected override void OnDeactivate(EventArgs e)
         {
             base.OnDeactivate(e);
-            _messagePump.Pause();
+
+            if (_running)
+            {
+                _messagePump.Pause();
+            }
         }
 
         protected override void OnClosing(CancelEventArgs e)
         {
             base.OnClosing(e);
-            _messagePump.Stop();
+
+            if (_running)
+            {
+                _messagePump.Stop();
+            }
         }
 
         protected override void OnKeyDown(KeyEventArgs e)
@@ -153,8 +207,7 @@ namespace elbsi_ui
                     _input.P1Shot = pressed;
                     break;
 
-
-                case Keys.Tab:
+                case Keys.ShiftKey:
                     _limitFrameRate = !pressed;
                     break;
 
@@ -240,7 +293,7 @@ namespace elbsi_ui
                     for (int i = 0; i < 8; i++)
                     {
                         int outy = 255 - (x * 8) - i;
-                        output[(outy * 224) + outx] = ((input >> i) & 0x01) == 0x01 ? _overlay[(outy * 224) + outx] : 0xFF000000;                        
+                        output[(outy * 224) + outx] = ((input >> i) & 0x01) == 0x01 ? _overlay[(outy * 224) + outx] : 0xFF000000;
                     }
                 }
             }
