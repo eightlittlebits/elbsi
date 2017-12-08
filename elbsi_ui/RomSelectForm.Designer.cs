@@ -28,34 +28,25 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.Label label1;
             System.Windows.Forms.Label label2;
             System.Windows.Forms.Label label3;
             System.Windows.Forms.Label label4;
-            this.okButton = new System.Windows.Forms.Button();
-            this.cancelButton = new System.Windows.Forms.Button();
-            this.slotHLocation = new System.Windows.Forms.TextBox();
-            this.slotELocation = new System.Windows.Forms.TextBox();
-            this.slotGLocation = new System.Windows.Forms.TextBox();
-            this.slotFLocation = new System.Windows.Forms.TextBox();
-            this.slotHBrowseButton = new System.Windows.Forms.Button();
-            this.slotGBrowseButton = new System.Windows.Forms.Button();
-            this.slotEBrowseButton = new System.Windows.Forms.Button();
-            this.slotFBrowseButton = new System.Windows.Forms.Button();
-            label1 = new System.Windows.Forms.Label();
+            System.Windows.Forms.Label label1;
+            this.Ok = new System.Windows.Forms.Button();
+            this.Cancel = new System.Windows.Forms.Button();
+            this.SlotHLocation = new System.Windows.Forms.TextBox();
+            this.SlotELocation = new System.Windows.Forms.TextBox();
+            this.SlotGLocation = new System.Windows.Forms.TextBox();
+            this.SlotFLocation = new System.Windows.Forms.TextBox();
+            this.SlotHBrowseButton = new System.Windows.Forms.Button();
+            this.SlotGBrowseButton = new System.Windows.Forms.Button();
+            this.SlotEBrowseButton = new System.Windows.Forms.Button();
+            this.SlotFBrowseButton = new System.Windows.Forms.Button();
             label2 = new System.Windows.Forms.Label();
             label3 = new System.Windows.Forms.Label();
             label4 = new System.Windows.Forms.Label();
+            label1 = new System.Windows.Forms.Label();
             this.SuspendLayout();
-            // 
-            // label1
-            // 
-            label1.AutoSize = true;
-            label1.Location = new System.Drawing.Point(12, 15);
-            label1.Name = "label1";
-            label1.Size = new System.Drawing.Size(36, 13);
-            label1.TabIndex = 10;
-            label1.Text = "Slot H";
             // 
             // label2
             // 
@@ -84,120 +75,134 @@
             label4.TabIndex = 13;
             label4.Text = "Slot E";
             // 
-            // okButton
+            // label1
             // 
-            this.okButton.DialogResult = System.Windows.Forms.DialogResult.OK;
-            this.okButton.Location = new System.Drawing.Point(115, 125);
-            this.okButton.Name = "okButton";
-            this.okButton.Size = new System.Drawing.Size(75, 23);
-            this.okButton.TabIndex = 0;
-            this.okButton.Text = "OK";
-            this.okButton.UseVisualStyleBackColor = true;
+            label1.AutoSize = true;
+            label1.Location = new System.Drawing.Point(12, 15);
+            label1.Name = "label1";
+            label1.Size = new System.Drawing.Size(36, 13);
+            label1.TabIndex = 14;
+            label1.Text = "Slot H";
             // 
-            // cancelButton
+            // Ok
             // 
-            this.cancelButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.cancelButton.Location = new System.Drawing.Point(196, 125);
-            this.cancelButton.Name = "cancelButton";
-            this.cancelButton.Size = new System.Drawing.Size(75, 23);
-            this.cancelButton.TabIndex = 1;
-            this.cancelButton.Text = "Cancel";
-            this.cancelButton.UseVisualStyleBackColor = true;
+            this.Ok.DialogResult = System.Windows.Forms.DialogResult.OK;
+            this.Ok.Location = new System.Drawing.Point(115, 125);
+            this.Ok.Name = "Ok";
+            this.Ok.Size = new System.Drawing.Size(75, 23);
+            this.Ok.TabIndex = 0;
+            this.Ok.Text = "OK";
+            this.Ok.UseVisualStyleBackColor = true;
             // 
-            // slotHLocation
+            // Cancel
             // 
-            this.slotHLocation.Location = new System.Drawing.Point(54, 12);
-            this.slotHLocation.Name = "slotHLocation";
-            this.slotHLocation.Size = new System.Drawing.Size(283, 20);
-            this.slotHLocation.TabIndex = 2;
+            this.Cancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+            this.Cancel.Location = new System.Drawing.Point(196, 125);
+            this.Cancel.Name = "Cancel";
+            this.Cancel.Size = new System.Drawing.Size(75, 23);
+            this.Cancel.TabIndex = 1;
+            this.Cancel.Text = "Cancel";
+            this.Cancel.UseVisualStyleBackColor = true;
             // 
-            // slotELocation
+            // SlotHLocation
             // 
-            this.slotELocation.Location = new System.Drawing.Point(54, 99);
-            this.slotELocation.Name = "slotELocation";
-            this.slotELocation.Size = new System.Drawing.Size(283, 20);
-            this.slotELocation.TabIndex = 3;
+            this.SlotHLocation.Location = new System.Drawing.Point(54, 12);
+            this.SlotHLocation.Name = "SlotHLocation";
+            this.SlotHLocation.Size = new System.Drawing.Size(283, 20);
+            this.SlotHLocation.TabIndex = 2;
+            this.SlotHLocation.Tag = "H";
             // 
-            // slotGLocation
+            // SlotELocation
             // 
-            this.slotGLocation.Location = new System.Drawing.Point(54, 41);
-            this.slotGLocation.Name = "slotGLocation";
-            this.slotGLocation.Size = new System.Drawing.Size(283, 20);
-            this.slotGLocation.TabIndex = 4;
+            this.SlotELocation.Location = new System.Drawing.Point(54, 99);
+            this.SlotELocation.Name = "SlotELocation";
+            this.SlotELocation.Size = new System.Drawing.Size(283, 20);
+            this.SlotELocation.TabIndex = 3;
+            this.SlotELocation.Tag = "E";
             // 
-            // slotFLocation
+            // SlotGLocation
             // 
-            this.slotFLocation.Location = new System.Drawing.Point(54, 70);
-            this.slotFLocation.Name = "slotFLocation";
-            this.slotFLocation.Size = new System.Drawing.Size(283, 20);
-            this.slotFLocation.TabIndex = 5;
+            this.SlotGLocation.Location = new System.Drawing.Point(54, 41);
+            this.SlotGLocation.Name = "SlotGLocation";
+            this.SlotGLocation.Size = new System.Drawing.Size(283, 20);
+            this.SlotGLocation.TabIndex = 4;
+            this.SlotGLocation.Tag = "G";
             // 
-            // slotHBrowseButton
+            // SlotFLocation
             // 
-            this.slotHBrowseButton.Location = new System.Drawing.Point(343, 10);
-            this.slotHBrowseButton.Name = "slotHBrowseButton";
-            this.slotHBrowseButton.Size = new System.Drawing.Size(31, 23);
-            this.slotHBrowseButton.TabIndex = 6;
-            this.slotHBrowseButton.Text = "...";
-            this.slotHBrowseButton.UseVisualStyleBackColor = true;
-            this.slotHBrowseButton.Click += new System.EventHandler(this.SlotHBrowseButtonClick);
+            this.SlotFLocation.Location = new System.Drawing.Point(54, 70);
+            this.SlotFLocation.Name = "SlotFLocation";
+            this.SlotFLocation.Size = new System.Drawing.Size(283, 20);
+            this.SlotFLocation.TabIndex = 5;
+            this.SlotFLocation.Tag = "F";
             // 
-            // slotGBrowseButton
+            // SlotHBrowseButton
             // 
-            this.slotGBrowseButton.Location = new System.Drawing.Point(343, 39);
-            this.slotGBrowseButton.Name = "slotGBrowseButton";
-            this.slotGBrowseButton.Size = new System.Drawing.Size(31, 23);
-            this.slotGBrowseButton.TabIndex = 7;
-            this.slotGBrowseButton.Text = "...";
-            this.slotGBrowseButton.UseVisualStyleBackColor = true;
-            this.slotGBrowseButton.Click += new System.EventHandler(this.SlotGBrowseButtonClick);
+            this.SlotHBrowseButton.Location = new System.Drawing.Point(343, 10);
+            this.SlotHBrowseButton.Name = "SlotHBrowseButton";
+            this.SlotHBrowseButton.Size = new System.Drawing.Size(31, 23);
+            this.SlotHBrowseButton.TabIndex = 6;
+            this.SlotHBrowseButton.Text = "...";
+            this.SlotHBrowseButton.UseVisualStyleBackColor = true;
+            this.SlotHBrowseButton.Click += new System.EventHandler(this.BrowseButtonClick);
             // 
-            // slotEBrowseButton
+            // SlotGBrowseButton
             // 
-            this.slotEBrowseButton.Location = new System.Drawing.Point(343, 97);
-            this.slotEBrowseButton.Name = "slotEBrowseButton";
-            this.slotEBrowseButton.Size = new System.Drawing.Size(31, 23);
-            this.slotEBrowseButton.TabIndex = 8;
-            this.slotEBrowseButton.Text = "...";
-            this.slotEBrowseButton.UseVisualStyleBackColor = true;
-            this.slotEBrowseButton.Click += new System.EventHandler(this.SlotEBrowseButtonClick);
+            this.SlotGBrowseButton.Location = new System.Drawing.Point(343, 39);
+            this.SlotGBrowseButton.Name = "SlotGBrowseButton";
+            this.SlotGBrowseButton.Size = new System.Drawing.Size(31, 23);
+            this.SlotGBrowseButton.TabIndex = 7;
+            this.SlotGBrowseButton.Text = "...";
+            this.SlotGBrowseButton.UseVisualStyleBackColor = true;
+            this.SlotGBrowseButton.Click += new System.EventHandler(this.BrowseButtonClick);
             // 
-            // slotFBrowseButton
+            // SlotEBrowseButton
             // 
-            this.slotFBrowseButton.Location = new System.Drawing.Point(343, 68);
-            this.slotFBrowseButton.Name = "slotFBrowseButton";
-            this.slotFBrowseButton.Size = new System.Drawing.Size(31, 23);
-            this.slotFBrowseButton.TabIndex = 9;
-            this.slotFBrowseButton.Text = "...";
-            this.slotFBrowseButton.UseVisualStyleBackColor = true;
-            this.slotFBrowseButton.Click += new System.EventHandler(this.SlotFBrowseButtonClick);
+            this.SlotEBrowseButton.Location = new System.Drawing.Point(343, 97);
+            this.SlotEBrowseButton.Name = "SlotEBrowseButton";
+            this.SlotEBrowseButton.Size = new System.Drawing.Size(31, 23);
+            this.SlotEBrowseButton.TabIndex = 8;
+            this.SlotEBrowseButton.Text = "...";
+            this.SlotEBrowseButton.UseVisualStyleBackColor = true;
+            this.SlotEBrowseButton.Click += new System.EventHandler(this.BrowseButtonClick);
+            // 
+            // SlotFBrowseButton
+            // 
+            this.SlotFBrowseButton.Location = new System.Drawing.Point(343, 68);
+            this.SlotFBrowseButton.Name = "SlotFBrowseButton";
+            this.SlotFBrowseButton.Size = new System.Drawing.Size(31, 23);
+            this.SlotFBrowseButton.TabIndex = 9;
+            this.SlotFBrowseButton.Text = "...";
+            this.SlotFBrowseButton.UseVisualStyleBackColor = true;
+            this.SlotFBrowseButton.Click += new System.EventHandler(this.BrowseButtonClick);
             // 
             // RomSelectForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.CancelButton = this.Cancel;
             this.ClientSize = new System.Drawing.Size(386, 158);
+            this.Controls.Add(label1);
             this.Controls.Add(label4);
             this.Controls.Add(label3);
             this.Controls.Add(label2);
-            this.Controls.Add(label1);
-            this.Controls.Add(this.slotFBrowseButton);
-            this.Controls.Add(this.slotEBrowseButton);
-            this.Controls.Add(this.slotGBrowseButton);
-            this.Controls.Add(this.slotHBrowseButton);
-            this.Controls.Add(this.slotFLocation);
-            this.Controls.Add(this.slotGLocation);
-            this.Controls.Add(this.slotELocation);
-            this.Controls.Add(this.slotHLocation);
-            this.Controls.Add(this.cancelButton);
-            this.Controls.Add(this.okButton);
+            this.Controls.Add(this.SlotFBrowseButton);
+            this.Controls.Add(this.SlotEBrowseButton);
+            this.Controls.Add(this.SlotGBrowseButton);
+            this.Controls.Add(this.SlotHBrowseButton);
+            this.Controls.Add(this.SlotFLocation);
+            this.Controls.Add(this.SlotGLocation);
+            this.Controls.Add(this.SlotELocation);
+            this.Controls.Add(this.SlotHLocation);
+            this.Controls.Add(this.Cancel);
+            this.Controls.Add(this.Ok);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "RomSelectForm";
             this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-            this.Text = "Select ROM";
+            this.Text = "Select ROMs";
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -205,15 +210,15 @@
 
         #endregion
 
-        private System.Windows.Forms.Button okButton;
-        private System.Windows.Forms.Button cancelButton;
-        private System.Windows.Forms.TextBox slotHLocation;
-        private System.Windows.Forms.TextBox slotELocation;
-        private System.Windows.Forms.TextBox slotGLocation;
-        private System.Windows.Forms.TextBox slotFLocation;
-        private System.Windows.Forms.Button slotHBrowseButton;
-        private System.Windows.Forms.Button slotGBrowseButton;
-        private System.Windows.Forms.Button slotEBrowseButton;
-        private System.Windows.Forms.Button slotFBrowseButton;
+        private System.Windows.Forms.Button Ok;
+        private System.Windows.Forms.Button Cancel;
+        private System.Windows.Forms.TextBox SlotHLocation;
+        private System.Windows.Forms.TextBox SlotELocation;
+        private System.Windows.Forms.TextBox SlotGLocation;
+        private System.Windows.Forms.TextBox SlotFLocation;
+        private System.Windows.Forms.Button SlotHBrowseButton;
+        private System.Windows.Forms.Button SlotGBrowseButton;
+        private System.Windows.Forms.Button SlotEBrowseButton;
+        private System.Windows.Forms.Button SlotFBrowseButton;
     }
 }

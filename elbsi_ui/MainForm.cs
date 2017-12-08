@@ -87,8 +87,8 @@ namespace elbsi_ui
                                              new MenuItem("&File", new[] {
                                                  new MenuItem("&Open", OpenRom),
                                                  new MenuItem("-"),
-                                                 new MenuItem("E&xit", CloseForm)
-                                             })
+                                                 new MenuItem("E&xit", CloseForm),
+                                             }),
                                          });
 
             return menu;
@@ -96,23 +96,39 @@ namespace elbsi_ui
 
         private void OpenRom(object sender, EventArgs e)
         {
-            RomSelectForm romSelect = new RomSelectForm()
+            using (RomSelectForm romSelect = new RomSelectForm() { Owner = this })
             {
-                Owner = this,
-            };
+                if (romSelect.ShowDialog() == DialogResult.OK)
+                {
+                    // load rom files into memory
+                    LoadRom(0x0000, romSelect.SlotHFilename);
+                    LoadRom(0x0800, romSelect.SlotGFilename);
+                    LoadRom(0x1000, romSelect.SlotFFilename);
+                    LoadRom(0x1800, romSelect.SlotEFilename);
 
-            if (romSelect.ShowDialog() == DialogResult.OK)
-            {
-                // load rom files into memory
-                _invaders.LoadRom(0x0000, File.ReadAllBytes(romSelect.SlotHFilename));
-                _invaders.LoadRom(0x0800, File.ReadAllBytes(romSelect.SlotGFilename));
-                _invaders.LoadRom(0x1000, File.ReadAllBytes(romSelect.SlotFFilename));
-                _invaders.LoadRom(0x1800, File.ReadAllBytes(romSelect.SlotEFilename));
-
-                // begin running
-                _messagePump.RunWhileIdle(Frame);
-                _running = true;
+                    // begin running
+                    _messagePump.RunWhileIdle(Frame);
+                    _running = true;
+                }
             }
+        }
+
+        private void LoadRom(ushort address, string filename)
+        {
+            if (!File.Exists(filename))
+            {
+                throw new FileNotFoundException($"ROM file {Path.GetFileName(filename)} not found.", filename);
+            }
+
+            byte[] romData = File.ReadAllBytes(filename);
+
+            // each rom must be 2k
+            if (romData.Length != 0x800)
+            {
+                throw new InvalidDataException($"ROM file {Path.GetFileName(filename)} is incorrect size, expected 2048 bytes.");
+            }
+
+            _invaders.LoadRom(address, romData);
         }
 
         private void SetFormStyles()
