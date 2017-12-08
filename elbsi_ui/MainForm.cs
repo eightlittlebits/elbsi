@@ -34,7 +34,7 @@ namespace elbsi_ui
         private SpaceInvaders _invaders;
         private InputState _input;
 
-        private bool _running;
+        private bool _running = false;
 
         public MainForm()
         {
@@ -55,13 +55,6 @@ namespace elbsi_ui
             _input = new InputState();
 
             InitializeOverlay();
-
-            _invaders.LoadRom(0x0000, File.ReadAllBytes(@"roms\invaders\invaders.h"));
-            //_invaders.LoadRom(0x0000, File.ReadAllBytes(@"roms\invaders_test_rom\Sitest_716.bin"));
-            //_invaders.LoadRom(0x0000, File.ReadAllBytes(@"roms\\test_rom_space_invd_v1_2_source\test.h"));
-            _invaders.LoadRom(0x0800, File.ReadAllBytes(@"roms\invaders\invaders.g"));
-            _invaders.LoadRom(0x1000, File.ReadAllBytes(@"roms\invaders\invaders.f"));
-            _invaders.LoadRom(0x1800, File.ReadAllBytes(@"roms\invaders\invaders.e"));
         }
 
         private void InitializeOverlay()
@@ -92,13 +85,34 @@ namespace elbsi_ui
         {
             MainMenu menu = new MainMenu(new[] {
                                              new MenuItem("&File", new[] {
-                                                 new MenuItem("&Open"),
+                                                 new MenuItem("&Open", OpenRom),
                                                  new MenuItem("-"),
                                                  new MenuItem("E&xit", CloseForm)
                                              })
                                          });
 
             return menu;
+        }
+
+        private void OpenRom(object sender, EventArgs e)
+        {
+            RomSelectForm romSelect = new RomSelectForm()
+            {
+                Owner = this,
+            };
+
+            if (romSelect.ShowDialog() == DialogResult.OK)
+            {
+                // load rom files into memory
+                _invaders.LoadRom(0x0000, File.ReadAllBytes(romSelect.SlotHFilename));
+                _invaders.LoadRom(0x0800, File.ReadAllBytes(romSelect.SlotGFilename));
+                _invaders.LoadRom(0x1000, File.ReadAllBytes(romSelect.SlotFFilename));
+                _invaders.LoadRom(0x1800, File.ReadAllBytes(romSelect.SlotEFilename));
+
+                // begin running
+                _messagePump.RunWhileIdle(Frame);
+                _running = true;
+            }
         }
 
         private void SetFormStyles()
@@ -123,9 +137,6 @@ namespace elbsi_ui
             base.OnLoad(e);
 
             ClientSize = new Size(_screenWidth * 2, _screenHeight * 2);
-
-            _messagePump.RunWhileIdle(Frame);
-            _running = true;
         }
 
         private void CloseForm(object sender, EventArgs e)
