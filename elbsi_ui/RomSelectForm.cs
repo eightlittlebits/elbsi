@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Windows.Forms;
 
 namespace elbsi_ui
@@ -9,6 +10,8 @@ namespace elbsi_ui
         public string SlotGFilename { get; set; }
         public string SlotFFilename { get; set; }
         public string SlotEFilename { get; set; }
+
+        public string[] DefaultPaths { get; internal set; }
 
         private Dictionary<Button, TextBox> _buttonTextBoxMap;
 
@@ -28,6 +31,17 @@ namespace elbsi_ui
                 { SlotFBrowseButton, SlotFLocation },
                 { SlotEBrowseButton, SlotELocation }
             };
+        }
+
+        protected override void OnLoad(EventArgs e)
+        {
+            base.OnLoad(e);
+
+            // add any defaults provided
+            SlotHLocation.Text = DefaultPaths[0];
+            SlotGLocation.Text = DefaultPaths[1];
+            SlotFLocation.Text = DefaultPaths[2];
+            SlotELocation.Text = DefaultPaths[3];
         }
 
         private void BrowseButtonClick(object sender, System.EventArgs e)

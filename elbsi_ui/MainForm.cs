@@ -96,8 +96,17 @@ namespace elbsi_ui
 
         private void OpenRom(object sender, EventArgs e)
         {
-            using (RomSelectForm romSelect = new RomSelectForm() { Owner = this })
+            using (RomSelectForm romSelect = new RomSelectForm())
             {
+                romSelect.Owner = this;
+                romSelect.DefaultPaths = new[]
+                {
+                    @"roms\invaders\invaders.h",
+                    @"roms\invaders\invaders.g",
+                    @"roms\invaders\invaders.f",
+                    @"roms\invaders\invaders.e"
+                };
+
                 if (romSelect.ShowDialog() == DialogResult.OK)
                 {
                     // load rom files into memory
