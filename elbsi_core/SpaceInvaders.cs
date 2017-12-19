@@ -1,8 +1,9 @@
-﻿using elbsi_core.CPU;
+﻿using System;
+using elbsi_core.CPU;
 
 namespace elbsi_core
 {
-    public class SpaceInvaders : IInputIODevice
+    public class SpaceInvaders : IInputIODevice, IOutputIODevice
     {
         private Bus _bus;
         private I8080 _i8080;
@@ -12,7 +13,11 @@ namespace elbsi_core
 
         private InputState _input;
 
-        public SpaceInvaders()
+        private byte _lastPort3Write, _lastPort5Write;
+
+        Action<int, bool> PlaySound;
+
+        public SpaceInvaders(Action<int, bool> playSound)
         {
             _bus = new Bus();
             _i8080 = new I8080(_bus);
@@ -20,7 +25,11 @@ namespace elbsi_core
 
             _cycles = 0;
 
+            PlaySound = playSound;
+
             _bus.RegisterInputIODevice(0x01, this);
+            _bus.RegisterOutputIODevice(0x03, this);
+            _bus.RegisterOutputIODevice(0x05, this);
         }
 
         public void LoadRom(ushort address, byte[] rom) => _bus.Load(address, rom);
@@ -68,6 +77,80 @@ namespace elbsi_core
             }
 
             return (byte)portValue;
+        }
+
+        public void Out(byte port, byte value)
+        {
+            switch (port)
+            {
+                case 0x03:
+                    // Port 3:
+                    //bit 0=UFO (repeats)        SX0 0.raw
+                    if ((value & ~_lastPort3Write) == 0x01)
+                    {
+                        PlaySound(0, true);
+                    }
+                    else if ((~value & _lastPort3Write) == 0x01)
+                    {
+                        PlaySound(0, false);
+                    }
+
+                    //bit 1=Shot                 SX1 1.raw
+                    if ((value & ~_lastPort3Write) == 0x02)
+                    {
+                        PlaySound(1, true);
+                    }
+
+                    //bit 2=Flash (player die)   SX2 2.raw
+                    if ((value & ~_lastPort3Write) == 0x04)
+                    {
+                        PlaySound(2, true);
+                    }
+
+                    //bit 3=Invader die          SX3 3.raw
+                    if ((value & ~_lastPort3Write) == 0x08)
+                    {
+                        PlaySound(3, true);
+                    }
+
+                    _lastPort3Write = value;
+                    break;
+
+                case 0x05:
+                    //Port 5:
+                    //bit 0=Fleet movement 1     SX6 4.raw
+                    if ((value & ~_lastPort5Write) == 0x01)
+                    {
+                        PlaySound(4, true);
+                    }
+
+                    //bit 1=Fleet movement 2     SX7 5.raw
+                    if ((value & ~_lastPort5Write) == 0x02)
+                    {
+                        PlaySound(5, true);
+                    }
+
+                    //bit 2=Fleet movement 3     SX8 6.raw
+                    if ((value & ~_lastPort5Write) == 0x04)
+                    {
+                        PlaySound(6, true);
+                    }
+
+                    //bit 3=Fleet movement 4     SX9 7.raw
+                    if ((value & ~_lastPort5Write) == 0x08)
+                    {
+                        PlaySound(7, true);
+                    }
+
+                    //bit 4=UFO Hit              SX10 8.raw
+                    if ((value & ~_lastPort5Write) == 0x10)
+                    {
+                        PlaySound(8, true);
+                    }
+
+                    _lastPort5Write = value;
+                    break;
+            }
         }
     }
 }

@@ -19,6 +19,9 @@ namespace elbsi_ui
 
         private MessagePump _messagePump;
 
+        private AudioDevice _audioDevice;
+        private SoundEffect[] _soundEffects;
+
         private readonly double _stopwatchFrequency;
 
         private readonly double _targetFrameTicks;
@@ -47,14 +50,43 @@ namespace elbsi_ui
 
             _messagePump = new MessagePump();
 
+            _audioDevice = new AudioDevice(this.Handle);
+            _soundEffects = LoadSoundEffects();
+
             _renderer = new GdiRenderer(this);
             _displayBuffer = new DirectBitmap(_screenWidth, _screenHeight);
             _display = new byte[0x1C00];
 
-            _invaders = new SpaceInvaders();
+            _invaders = new SpaceInvaders(PlaySound);
             _input = new InputState();
 
             InitializeOverlay();
+        }
+
+        private SoundEffect[] LoadSoundEffects()
+        {
+            SoundEffect[] soundEffects = new SoundEffect[9];
+
+            for (int i = 0; i < 9; i++)
+            {
+                soundEffects[i] = _audioDevice.LoadSoundEffect($"sounds\\{i}.wav");
+            }
+
+            soundEffects[0].Looping = true;
+
+            return soundEffects;
+        }
+
+        private void PlaySound(int sound, bool play)
+        {
+            if (play)
+            {
+                _soundEffects[sound].Play();
+            }
+            else
+            {
+                _soundEffects[sound].Stop();
+            }
         }
 
         private void InitializeOverlay()
@@ -339,6 +371,11 @@ namespace elbsi_ui
         {
             if (disposing)
             {
+                for (int i = 0; i < _soundEffects.Length; i++)
+                {
+                    _soundEffects[i].Dispose();
+                }
+                _audioDevice.Dispose();
                 components?.Dispose();
                 _displayBuffer.Dispose();
             }
