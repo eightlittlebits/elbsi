@@ -42,8 +42,8 @@ namespace elbsi_ui
             _targetFrameTicks = _stopwatchFrequency / _targetFramesPerSecond;
 
             InitializeComponent();
+            BuildMainMenu();
             SetFormStyles();
-            Menu = BuildMainMenu();
 
             _messagePump = new MessagePump();
 
@@ -81,7 +81,7 @@ namespace elbsi_ui
             }
         }
 
-        private MainMenu BuildMainMenu()
+        private void BuildMainMenu()
         {
             MainMenu menu = new MainMenu(new[] {
                                              new MenuItem("&File", new[] {
@@ -91,7 +91,7 @@ namespace elbsi_ui
                                              }),
                                          });
 
-            return menu;
+            this.Menu = menu;
         }
 
         private void OpenRom(object sender, EventArgs e)
