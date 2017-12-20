@@ -15,7 +15,7 @@ namespace elbsi_core
 
         private byte _lastPort3Write, _lastPort5Write;
 
-        Action<int, bool> PlaySound;
+        Action<int, bool> _playSound;
 
         public SpaceInvaders(Action<int, bool> playSound)
         {
@@ -25,7 +25,7 @@ namespace elbsi_core
 
             _cycles = 0;
 
-            PlaySound = playSound;
+            _playSound = playSound;
 
             _bus.RegisterInputIODevice(0x01, this);
             _bus.RegisterOutputIODevice(0x03, this);
@@ -86,31 +86,31 @@ namespace elbsi_core
                 case 0x03:
                     // Port 3:
                     //bit 0=UFO (repeats)        SX0 0.raw
-                    if ((value & ~_lastPort3Write) == 0x01)
+                    if (((value & 0x01) & ~_lastPort3Write) == 0x01)
                     {
-                        PlaySound(0, true);
+                        _playSound(0, true);
                     }
-                    else if ((~value & _lastPort3Write) == 0x01)
+                    else if (((~value & 0x01) & _lastPort3Write) == 0x01)
                     {
-                        PlaySound(0, false);
+                        _playSound(0, false);
                     }
 
                     //bit 1=Shot                 SX1 1.raw
-                    if ((value & ~_lastPort3Write) == 0x02)
+                    if (((value & 0x02) & ~_lastPort3Write) == 0x02)
                     {
-                        PlaySound(1, true);
+                        _playSound(1, true);
                     }
 
                     //bit 2=Flash (player die)   SX2 2.raw
-                    if ((value & ~_lastPort3Write) == 0x04)
+                    if (((value & 0x04) & ~_lastPort3Write) == 0x04)
                     {
-                        PlaySound(2, true);
+                        _playSound(2, true);
                     }
 
                     //bit 3=Invader die          SX3 3.raw
-                    if ((value & ~_lastPort3Write) == 0x08)
+                    if (((value & 0x08) & ~_lastPort3Write) == 0x08)
                     {
-                        PlaySound(3, true);
+                        _playSound(3, true);
                     }
 
                     _lastPort3Write = value;
@@ -119,33 +119,33 @@ namespace elbsi_core
                 case 0x05:
                     //Port 5:
                     //bit 0=Fleet movement 1     SX6 4.raw
-                    if ((value & ~_lastPort5Write) == 0x01)
+                    if (((value & 0x01) & ~_lastPort5Write) == 0x01)
                     {
-                        PlaySound(4, true);
+                        _playSound(4, true);
                     }
 
                     //bit 1=Fleet movement 2     SX7 5.raw
-                    if ((value & ~_lastPort5Write) == 0x02)
+                    if (((value & 0x02) & ~_lastPort5Write) == 0x02)
                     {
-                        PlaySound(5, true);
+                        _playSound(5, true);
                     }
 
                     //bit 2=Fleet movement 3     SX8 6.raw
-                    if ((value & ~_lastPort5Write) == 0x04)
+                    if (((value & 0x04) & ~_lastPort5Write) == 0x04)
                     {
-                        PlaySound(6, true);
+                        _playSound(6, true);
                     }
 
                     //bit 3=Fleet movement 4     SX9 7.raw
-                    if ((value & ~_lastPort5Write) == 0x08)
+                    if (((value & 0x08) & ~_lastPort5Write) == 0x08)
                     {
-                        PlaySound(7, true);
+                        _playSound(7, true);
                     }
 
                     //bit 4=UFO Hit              SX10 8.raw
-                    if ((value & ~_lastPort5Write) == 0x10)
+                    if (((value & 0x10) & ~_lastPort5Write) == 0x10)
                     {
-                        PlaySound(8, true);
+                        _playSound(8, true);
                     }
 
                     _lastPort5Write = value;
