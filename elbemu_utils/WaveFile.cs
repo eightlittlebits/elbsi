@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO;
 using System.Runtime.InteropServices;
+using System.Text;
 
 namespace elbemu_utils
 {
@@ -15,10 +17,10 @@ namespace elbemu_utils
         private const DWORD ChunkID_Fmt = 0x20746d66; //  FourCC('f', 'm', 't', ' ');
         private const DWORD ChunkID_Data = 0x61746164; // FourCC('d', 'a', 't', 'a');
 
-        //static DWORD FourCC(char a, char b, char c, char d)
-        //{
-        //    return (uint)(a << 0 | b << 8 | c << 16 | d << 24);
-        //}
+        static DWORD FourCC(char a, char b, char c, char d)
+        {
+            return (uint)(a << 0 | b << 8 | c << 16 | d << 24);
+        }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct RiffChunk
@@ -26,6 +28,7 @@ namespace elbemu_utils
             public uint ChunkID;
             public uint ChunkSize;
         }
+
         public enum WaveFormat : WORD
         {
             PCM = 0x0001
@@ -33,17 +36,6 @@ namespace elbemu_utils
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         public struct PCMWaveFormat
-        {
-            public WaveFormat FormatTag;
-            public WORD Channels;
-            public DWORD SamplesPerSec;
-            public DWORD AvgBytesPerSec;
-            public WORD BlockAlign;
-            public WORD BitsPerSample;
-        }
-
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        public struct PCMWaveFormatEx
         {
             public WaveFormat FormatTag;
             public WORD Channels;
@@ -67,6 +59,8 @@ namespace elbemu_utils
             PCMWaveFormat format = default;
             byte[] sampleData = null;
 
+            ref var foo = ref format;
+
             using (BinaryReader reader = new BinaryReader(new FileStream(path, FileMode.Open, FileAccess.Read)))
             {
                 while (reader.BaseStream.Position != reader.BaseStream.Length)
@@ -80,7 +74,7 @@ namespace elbemu_utils
                             var formType = reader.ReadUInt32();
                             if (formType != RiffForm_Wave)
                             {
-                                throw new InvalidDataException("RIFF form does not match WAVE");
+                                throw new InvalidDataException("RIFF form does not match 'WAVE'");
                             }
                             break;
 
@@ -88,7 +82,7 @@ namespace elbemu_utils
                             format = reader.ReadStruct<PCMWaveFormat>();
                             if (format.FormatTag != WaveFormat.PCM)
                             {
-                                throw new InvalidDataException("Format tag does not match WAVE_FORMAT_PCM");
+                                throw new InvalidDataException("Format tag does not match WAVE_FORMAT_PCM (1)");
                             }
 
                             // if the size of the header is larger than the struct then read the extended size and 
@@ -98,7 +92,6 @@ namespace elbemu_utils
                             {
                                 reader.BaseStream.Seek(extendedSize, SeekOrigin.Current);
                             }
-
                             break;
 
                         case ChunkID_Data:
@@ -107,6 +100,7 @@ namespace elbemu_utils
 
                         default:
                             // skip over this chunk if we don't recognise it
+                            Debug.WriteLine("Unrecognised chunk ID 0x{0:X2} '{1}'", riffChunk.ChunkID, Encoding.ASCII.GetString(BitConverter.GetBytes(riffChunk.ChunkID)));
                             reader.BaseStream.Seek(riffChunk.ChunkSize, SeekOrigin.Current);
                             break;
                     }
