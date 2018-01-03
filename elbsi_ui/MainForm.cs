@@ -2,6 +2,7 @@
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
+using System.Drawing.Imaging;
 using System.IO;
 using System.Threading;
 using System.Windows.Forms;
@@ -279,11 +280,23 @@ namespace elbsi_ui
                     _limitFrameRate = !pressed;
                     break;
 
+                case Keys.F6:
+                    if (pressed)
+                        SaveScreenshot(); 
+                    break;
+
                 default:
                     return false;
             }
 
             return true;
+        }
+
+        private void SaveScreenshot()
+        {
+            string datetime = DateTime.Now.ToString("yyyyMMddHHmmssff");
+
+            _displayBuffer.Bitmap.Save(datetime + ".png", ImageFormat.Png);
         }
 
         private void Frame()
