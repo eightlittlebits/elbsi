@@ -384,13 +384,19 @@ namespace elbsi_ui
         {
             if (disposing)
             {
+                if (_displayBuffer != null)
+                    _displayBuffer.Dispose();
+
                 for (int i = 0; i < _soundEffects.Length; i++)
                 {
                     _soundEffects[i].Dispose();
                 }
+
+                if (_audioDevice != null)
                 _audioDevice.Dispose();
-                components?.Dispose();
-                _displayBuffer.Dispose();
+
+                if (components != null)
+                    components.Dispose();
             }
 
             base.Dispose(disposing);
