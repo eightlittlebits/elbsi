@@ -47,6 +47,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Components\BindableMenuItem.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Configuration\XmlConfiguration.cs" />
     <Compile Include="DirectBitmap.cs" />
     <Compile Include="Components\DoubleBufferedPanel.cs">
       <SubType>Component</SubType>

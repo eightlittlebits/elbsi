@@ -7,6 +7,7 @@ using System.IO;
 using System.Threading;
 using System.Windows.Forms;
 using elbemu_utils;
+using elbemu_utils.Components;
 using elbsi_core;
 using elbsi_core.CPU;
 
@@ -28,8 +29,6 @@ namespace elbsi_ui
         private readonly double _targetFrameTicks;
         private long _lastFrameTimestamp;
 
-        private bool _limitFrameRate = true;
-
         private GdiRenderer _renderer;
         private DirectBitmap _displayBuffer;
         private byte[] _display;
@@ -40,12 +39,17 @@ namespace elbsi_ui
 
         private bool _running = false;
 
+        private EmulatorConfig _config;
+
         public MainForm()
         {
             _stopwatchFrequency = Stopwatch.Frequency;
             _targetFrameTicks = _stopwatchFrequency / _targetFramesPerSecond;
 
             InitializeComponent();
+
+            _config = EmulatorConfig.Load();
+
             BuildMainMenu();
             SetFormStyles();
 
@@ -62,6 +66,7 @@ namespace elbsi_ui
             _input = new InputState();
 
             InitializeOverlay();
+
         }
 
         private SoundEffect[] LoadSoundEffects()
@@ -116,14 +121,24 @@ namespace elbsi_ui
 
         private void BuildMainMenu()
         {
-            MainMenu menu = new MainMenu(new[] {
+            var limitFrameRateOption = new BindableMenuItem("Limit Frame Rate", (s_, e) => _config.LimitFrameRate = !_config.LimitFrameRate);
+            limitFrameRateOption.DataBindings.Add(nameof(limitFrameRateOption.Checked), _config, nameof(_config.LimitFrameRate));
+
+            var pauseWhenFocusLostOption = new BindableMenuItem("Pause When Focus Lost", (s, e) => _config.PauseWhenFocusLost = !_config.PauseWhenFocusLost);
+            pauseWhenFocusLostOption.DataBindings.Add(nameof(pauseWhenFocusLostOption.Checked), _config, nameof(_config.PauseWhenFocusLost));
+
+            var menu = new MainMenu(new[] {
                                              new MenuItem("&File", new[] {
                                                  new MenuItem("&Open", OpenRom),
                                                  new MenuItem("-"),
                                                  new MenuItem("E&xit", CloseForm),
                                              }),
+                                             new MenuItem("&Options", new[] {
+                                                 limitFrameRateOption,
+                                                 pauseWhenFocusLostOption
+                                             }),
                                          });
-
+            
             this.Menu = menu;
         }
 
@@ -206,7 +221,7 @@ namespace elbsi_ui
         {
             base.OnActivated(e);
 
-            if (_running)
+            if (_running && _config.PauseWhenFocusLost)
             {
                 _messagePump.Resume();
             }
@@ -216,7 +231,7 @@ namespace elbsi_ui
         {
             base.OnDeactivate(e);
 
-            if (_running)
+            if (_running && _config.PauseWhenFocusLost)
             {
                 _messagePump.Pause();
             }
@@ -230,6 +245,8 @@ namespace elbsi_ui
             {
                 _messagePump.Stop();
             }
+
+            _config.Save();
         }
 
         protected override void OnKeyDown(KeyEventArgs e)
@@ -277,12 +294,12 @@ namespace elbsi_ui
                     break;
 
                 case Keys.ShiftKey:
-                    _limitFrameRate = !pressed;
+                    _config.LimitFrameRate = !pressed;
                     break;
 
                 case Keys.F6:
                     if (pressed)
-                        SaveScreenshot(); 
+                        SaveScreenshot();
                     break;
 
                 default:
@@ -324,7 +341,7 @@ namespace elbsi_ui
             long currentTimeStamp = Stopwatch.GetTimestamp();
             long elapsedTicks = currentTimeStamp - _lastFrameTimestamp;
 
-            if (_limitFrameRate && elapsedTicks < _targetFrameTicks)
+            if (_config.LimitFrameRate && elapsedTicks < _targetFrameTicks)
             {
                 // get ms to sleep for, cast to int to truncate to nearest millisecond
                 // take 1 ms off the sleep time as we don't always hit the sleep exactly, trade
@@ -393,7 +410,7 @@ namespace elbsi_ui
                 }
 
                 if (_audioDevice != null)
-                _audioDevice.Dispose();
+                    _audioDevice.Dispose();
 
                 if (components != null)
                     components.Dispose();
