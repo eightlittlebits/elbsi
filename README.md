@@ -4,8 +4,14 @@
 
 A Space Invaders emulator in C#
 
-![Title Screen](https://eightlittlebits.github.io/elbsi/images/titlescreen.png) ![Where's he going with that Y?](https://eightlittlebits.github.io/elbsi/images/abduction.png)
-![In Game](https://eightlittlebits.github.io/elbsi/images/ingame.png) ![DEATH!](https://eightlittlebits.github.io/elbsi/images/death.png)
+<p align="center">
+  <img src="https://eightlittlebits.github.io/elbsi/images/titlescreen.png" alt="Title Screen" />
+  <img src="https://eightlittlebits.github.io/elbsi/images/abduction.png" alt="Where's he going with that Y?" />
+</p>
+<p align="center">
+  <img src="https://eightlittlebits.github.io/elbsi/images/ingame.png" alt="In Game" />
+  <img src="https://eightlittlebits.github.io/elbsi/images/death.png" alt="DEATH!" />
+</p>
 
 ## why
 
