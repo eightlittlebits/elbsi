@@ -523,7 +523,7 @@ namespace elbsi_core.CPU
         private static (byte, StatusFlags) Sub8Bit(byte a, byte b, bool carry = false)
         {
             // a - b - c = a + ~b + 1 - c = a + ~b + !c
-            var (result, flags) = Add8Bit(a, (byte)(~b), !carry);
+            var (result, flags) = Add8Bit(a, (byte)~b, !carry);
 
             flags ^= C;
 
@@ -535,7 +535,7 @@ namespace elbsi_core.CPU
             var (result, flags) = Add8Bit(a, 1);
 
             _r.F &= C;
-            _r.F |= (flags & ~C);
+            _r.F |= flags & ~C;
 
             return result;
         }
@@ -544,8 +544,9 @@ namespace elbsi_core.CPU
         {
             var (result, flags) = Sub8Bit(a, 1);
 
+            // dec preserves the carry flag
             _r.F &= C;
-            _r.F |= (flags & ~C);
+            _r.F |= flags & ~C;
 
             return result;
         }
@@ -576,7 +577,7 @@ namespace elbsi_core.CPU
                 correctionFactor |= 0x06;
             }
 
-            if ((_r.A) > 0x99 || _r.F[C])
+            if (_r.A > 0x99 || _r.F[C])
             {
                 correctionFactor |= 0x60;
                 carry = true;
@@ -629,7 +630,7 @@ namespace elbsi_core.CPU
         private byte RotateLeft(byte b)
         {
             // grab bit 7
-            bool bit7 = ((b & 0x80) == 0x80);
+            bool bit7 = (b & 0x80) == 0x80;
 
             // set carry flag if old bit 7 was set
             _r.F[C] = bit7;
@@ -672,7 +673,7 @@ namespace elbsi_core.CPU
             bool oldCarry = _r.F[C];
 
             // set carry if bottom bit is set
-            _r.F[C] = ((b & 0x01) == 0x01);
+            _r.F[C] = (b & 0x01) == 0x01;
 
             // shift left and place old carry in MSB
             byte result = (byte)((b >> 1) | (oldCarry ? 0x80 : 0));

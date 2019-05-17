@@ -378,7 +378,7 @@ namespace elbsi_ui
 
             _invaders.GetDisplayMemory(_display);
 
-            uint* output = ((uint*)_displayBuffer.BitmapData);
+            uint* output = (uint*)_displayBuffer.BitmapData;
 
             // convert 32x224 display into 224*256 display (rotates 90 degrees counter clockwise)
             for (int y = 0; y < displayHeight; y++)
