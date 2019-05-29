@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO;
 using System.Text;
 using elbsi_core;
@@ -26,6 +27,9 @@ namespace elbsi_console
 
         static void RunTest(string filename)
         {
+            var sw = Stopwatch.StartNew();
+            ulong instructionCount = 0;
+
             // load rom 
             byte[] rom = File.ReadAllBytes(filename);
 
@@ -67,40 +71,43 @@ namespace elbsi_console
                     switch (cpu.R.C)
                     {
                         case 2: // BDOS function 2 (C_WRITE) - Console output
-                            {
-                                // Entered with C=2, E=ASCII character.
-                                Console.Write((char)cpu.R.E);
-                            }
-                            break;
+                        {
+                            // Entered with C=2, E=ASCII character.
+                            Console.Write((char)cpu.R.E);
+                        }
+                        break;
 
                         case 9: // BDOS function 9 (C_WRITESTR) - Output string
+                        {
+                            // Entered with C=9, DE=address of string.
+                            // Display a string of ASCII characters, terminated with the $ character.
+                            StringBuilder sb = new StringBuilder();
+                            char output;
+
+                            ushort i = cpu.R.DE;
+                            while ((output = (char)bus.ReadByte(i++)) != '$')
                             {
-                                // Entered with C=9, DE=address of string.
-                                // Display a string of ASCII characters, terminated with the $ character.
-                                StringBuilder sb = new StringBuilder();
-                                char output;
-
-                                ushort i = cpu.R.DE;
-                                while ((output = (char)bus.ReadByte(i++)) != '$')
-                                {
-                                    sb.Append(output);
-                                }
-
-                                Console.Write(sb.ToString());
+                                sb.Append(output);
                             }
-                            break;
+
+                            Console.Write(sb.ToString());
+                        }
+                        break;
                     }
                 }
 
+                instructionCount++;
                 cpu.ExecuteInstruction();
 
                 // if we jumped to 0 then end this test
                 if (cpu.PC == 0x0000)
                 {
+                    sw.Stop();
+
                     Console.WriteLine();
                     Console.WriteLine();
-                    Console.WriteLine("Jump to 0x0000 from 0x{0:X4}", pc);
-                    
+                    Console.WriteLine($"Jump to 0x0000 from 0x{pc:X4}, {instructionCount} instructions executed, {sw.ElapsedMilliseconds}ms elapsed, {(double)instructionCount / sw.ElapsedMilliseconds} instructions/ms");
+
                     return;
                 }
             }
