@@ -37,6 +37,10 @@ namespace elbsi_console
             // call 5 is a call into BDOS, intercepted below
             bus.WriteByte(0x0005, 0xC9);
 
+            // patch in ram size
+            bus.WriteByte(0x0006, 0x00);
+            bus.WriteByte(0x0007, 0x17);
+
             I8080 cpu = new I8080(bus)
             {
                 PC = 0x100
