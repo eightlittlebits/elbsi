@@ -138,7 +138,7 @@ namespace elbsi_ui
                                                  pauseWhenFocusLostOption
                                              }),
                                          });
-            
+
             this.Menu = menu;
         }
 
@@ -318,7 +318,9 @@ namespace elbsi_ui
 
         private void Frame()
         {
+#if INTERNAL
             long updateTimeStart = Stopwatch.GetTimestamp();
+#endif
 
             try
             {
@@ -329,14 +331,18 @@ namespace elbsi_ui
                 _messagePump.Stop();
             }
 
+#if INTERNAL
             long updateTimeEnd = Stopwatch.GetTimestamp();
 
             long renderTimeStart = updateTimeEnd;
+#endif
 
             RenderDisplayToDisplayBuffer();
             _renderer.DrawBitmap(_displayBuffer.Bitmap);
 
-            long renderTimeEnd = Stopwatch.GetTimestamp();
+#if INTERNAL
+            long renderTimeEnd = Stopwatch.GetTimestamp(); 
+#endif
 
             long currentTimeStamp = Stopwatch.GetTimestamp();
             long elapsedTicks = currentTimeStamp - _lastFrameTimestamp;
@@ -359,16 +365,20 @@ namespace elbsi_ui
 
             long endFrameTimestamp = Stopwatch.GetTimestamp();
 
-            long totalFrameTicks = endFrameTimestamp - _lastFrameTimestamp;
+#if INTERNAL
+            long totalFrameTicks = endFrameTimestamp - _lastFrameTimestamp; 
+#endif
 
             _lastFrameTimestamp = endFrameTimestamp;
 
+#if INTERNAL
             double updateTime = (updateTimeEnd - updateTimeStart) * 1000 / _stopwatchFrequency;
             double renderTime = (renderTimeEnd - renderTimeStart) * 1000 / _stopwatchFrequency;
 
             double frameTime = totalFrameTicks * 1000 / _stopwatchFrequency;
 
-            this.Text = $"elbsi - {updateTime:00.000}ms {renderTime:00.000}ms {frameTime:00.0000}ms";
+            this.Text = $"elbsi - {updateTime:00.000}ms {renderTime:00.000}ms {frameTime:00.0000}ms"; 
+#endif
         }
 
         private unsafe void RenderDisplayToDisplayBuffer()
