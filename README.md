@@ -86,7 +86,7 @@ That turned into implementing parts of the i8080, which then turned into this.
 
 MIT License
 
-Copyright (c) 2018 David Parrott
+Copyright (c) 2018-2019 David Parrott
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
